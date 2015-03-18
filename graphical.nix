@@ -35,4 +35,13 @@
       ubuntu_font_family  # Ubuntu fonts
     ];
   };
+  services.redshift = {
+    enable = true;
+    latitude = "51.8";
+    longitude = "5.8";
+    temperature = {
+      day = 6500;
+      night = 5500;
+    };
+  };
 }
