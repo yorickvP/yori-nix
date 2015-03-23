@@ -34,6 +34,7 @@
       inconsolata  # monospaced
       source-code-pro
       ubuntu_font_family  # Ubuntu fonts
+      source-han-sans-japanese
     ];
   };
   services.redshift = {
