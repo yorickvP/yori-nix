@@ -19,6 +19,7 @@
     enable = true;
     driSupport32Bit = true;
   };
+  hardware.pulseaudio.enable = true;
 
   environment.systemPackages = with pkgs; [
     slock
