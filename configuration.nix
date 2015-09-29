@@ -47,18 +47,6 @@
 
   virtualisation.virtualbox.host.enable = true;
 
-  systemd.services.powerswitch = {
-    enable = true;
-    wantedBy = [ "multi-user.target" "suspend.target" ];
-    after = [ "suspend.target" "display-manager.service" ];
-    description = "Run powerswitch sometimes";
-    path = [ pkgs.hdparm pkgs.iw pkgs.gawk pkgs.kmod config.system.sbin.modprobe ];
-    preStart = "sleep 2s";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = ''/etc/powerdown/powerswitch'';
-    };
-  };
 
   # TODO: cups.
 

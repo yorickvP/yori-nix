@@ -4,6 +4,7 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      ./modules/powerdown.nix
     ];
 
   boot = {
@@ -32,13 +33,10 @@
   # for now
   systemd.services."display-manager".preStart = ''
    chmod a+w $(realpath /sys/class/backlight/nvidia_backlight/brightness) || true
-   /etc/powerdown/powerswitch   
   '';
   # any better ideas to do this?... please? the scripts are pretty heavily modified.
   # from https://github.com/march-linux/powerdown
   services.udev.extraRules = ''
-    SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="/etc/powerdown/powerdown"
-    SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="/etc/powerdown/powerup"
     SUBSYSTEM=="firmware", ACTION=="add", ATTR{loading}="-1"
   '';
 
