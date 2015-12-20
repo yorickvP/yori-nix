@@ -13,8 +13,7 @@
       device = "/dev/sda";
     };
     kernelModules = ["nvidiabl" "kvm-intel"];
-    kernelPackages = pkgs.linuxPackages_3_18;
-    extraModulePackages = [pkgs.linuxPackages_3_18.nvidiabl];
+    extraModulePackages = [pkgs.linuxPackages.nvidiabl];
     extraModprobeConfig = ''
       options nvidiabl min=0x384 max=0x4650
     '';
