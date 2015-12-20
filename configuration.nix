@@ -48,6 +48,8 @@
   virtualisation.virtualbox.host.enable = true;
 
 
+  nix.binaryCachePublicKeys = ["hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
+
   # TODO: cups.
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
