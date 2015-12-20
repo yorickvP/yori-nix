@@ -6,6 +6,8 @@ let
 in
 {
 
+  # the scripts are pretty heavily modified.
+  # from https://github.com/march-linux/powerdown
   services.udev.path=powerswpath;
   services.udev.extraRules = ''
     SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${powersw}"

@@ -30,7 +30,7 @@
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
-    (texLiveAggregationFun { paths = [ texLive texLiveExtra texLiveBeamer lmodern ]; })
+    #(texLiveAggregationFun { paths = [ texLive texLiveExtra texLiveBeamer lmodern ]; })
     atool
     bc
     git
