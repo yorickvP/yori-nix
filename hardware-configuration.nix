@@ -58,6 +58,9 @@
     };
 
   swapDevices = [ ];
-
+    services.printing = {
+      enable = true;
+      drivers = [ pkgs.gutenprint ];
+    };
   nix.maxJobs = 8;
 }
