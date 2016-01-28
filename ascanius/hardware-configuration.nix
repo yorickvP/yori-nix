@@ -4,8 +4,10 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      ./modules/powerdown.nix
+      ../modules/powerdown.nix
     ];
+
+  hardware.cpu.intel.updateMicrocode = true;
 
   boot = {
     loader.grub = {
@@ -33,8 +35,7 @@
   systemd.services."display-manager".preStart = ''
    chmod a+w $(realpath /sys/class/backlight/nvidia_backlight/brightness) || true
   '';
-  # any better ideas to do this?... please? the scripts are pretty heavily modified.
-  # from https://github.com/march-linux/powerdown
+  # this makes sure my wifi doesn't take a minute to work
   services.udev.extraRules = ''
     SUBSYSTEM=="firmware", ACTION=="add", ATTR{loading}="-1"
   '';
@@ -58,9 +59,9 @@
     };
 
   swapDevices = [ ];
-    services.printing = {
-      enable = true;
-      drivers = [ pkgs.gutenprint ];
-    };
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.gutenprint ];
+  };
   nix.maxJobs = 8;
 }

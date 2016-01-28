@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+if ! [ -e deploy_key ] || ! [ -e secrets.nix ]
+then
+	gpg --decrypt-files secrets.nix.asc deploy_key.asc
+	sudo chgrp nixbld deploy_key
+	chmod 640 deploy_key
+fi
+case $1 in
+local)
+	export NIX_PATH=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/ascanius/configuration.nix:secrets=`pwd`/secrets.nix
+	eval ${@:2}
+	;;
+remote)
+	export NIX_PATH="nixpkgs=$HOME/builds/nixpkgs/:ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
+	eval ${@:2}
+	;;
+local-deploy)
+	sudo $0 local nixos-rebuild switch
+	;;
+remote-deploy)
+	$0 remote nixops deploy ${@:2}
+	;;
+esac

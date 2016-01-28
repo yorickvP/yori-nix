@@ -22,11 +22,6 @@
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
 
-  environment.systemPackages = with pkgs; [
-    slock
-  ];
-  security.setuidPrograms = [ "slock" ];
-
   fonts = {
     enableFontDir = true;
     enableGhostscriptFonts = true;
