@@ -30,7 +30,7 @@ in
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
-    btrfs-progs
+    btrfs-progs ghostscript
   ];
 
   virtualisation.virtualbox.host.enable = true;

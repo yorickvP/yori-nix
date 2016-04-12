@@ -59,6 +59,8 @@
     reptyr
     tmux
     bc
+    mkpasswd
+    shadow
     
     # archiving
     xdelta
