@@ -15,6 +15,6 @@
     in builtins.toString sshIdFile} $TEMP_ID
     chown `whoami` $TEMP_ID
     chmod 400 $TEMP_ID
-    exec -a ssh ${openssh}/bin/ssh -i $TEMP_ID -o StrictHostKeyChecking=no "$@"
+    exec -a ssh ${openssh}/bin/ssh -F /dev/null -i $TEMP_ID -o StrictHostKeyChecking=no "$@"
   '';
 })

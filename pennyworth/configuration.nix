@@ -2,32 +2,28 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
-let yoricc = import ../packages/yori-cc.nix;
+let
+  secrets = import <secrets>;
+  yoricc = import ../packages/yori-cc.nix;
 in
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
+  imports = [
       ./hardware-configuration.nix
       ../roles/common.nix
-    ];
+  ];
 
-  # Use the GRUB 2 boot loader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  # Define on which hard drive you want to install Grub.
-  # boot.loader.grub.device = "/dev/sda";
+  networking.hostName = secrets.hostnames.pennyworth;
 
-  networking.hostName = (import <secrets>).hostnames.ospinio;
-
-
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  networking.enableIPv6 = lib.mkOverride 30 true;
 
-  # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "16.03";
+
+  # root password is useful from console, ssh has password logins disabled
+  users.extraUsers.root.hashedPassword = secrets.pennyworth_hashedPassword;
+
 
   services.nginx = {
     enable = true;
@@ -71,5 +67,6 @@ in
 
     '';
   };
-  networking.firewall.allowedTCPPorts = [22 80];
+  networking.firewall.allowedTCPPorts = [80];
+
 }

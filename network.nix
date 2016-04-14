@@ -8,4 +8,8 @@ with (import <secrets>).hostnames; {
 		imports = [./frumar/configuration.nix];
 		deployment.targetHost = frumar;
 	};
+	pennyworth = {
+		imports = [./pennyworth/configuration.nix];
+		deployment.targetHost = pennyworth;
+	};
 }

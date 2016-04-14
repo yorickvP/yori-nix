@@ -21,8 +21,11 @@
     https://hydra.nixos.org
   ];
 
-  nix.trustedBinaryCaches = config.nix.binaryCaches;
-  nix.binaryCachePublicKeys = ["hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
+  nix.trustedBinaryCaches = config.nix.binaryCaches ++ [http://hydra.cryp.to];
+  nix.binaryCachePublicKeys = [
+    "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs="
+    "hydra.cryp.to-1:8g6Hxvnp/O//5Q1bjjMTd5RO8ztTsG8DKPOAg9ANr2g="
+  ];
 
   nix.extraOptions = ''
     allow-unsafe-native-code-during-evaluation = true
