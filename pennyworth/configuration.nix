@@ -14,6 +14,7 @@ in
   imports = [
       ./hardware-configuration.nix
       ../roles/common.nix
+      ../modules/mailz.nix
       ../modules/nginx.nix
   ];
 
@@ -27,6 +28,17 @@ in
   # root password is useful from console, ssh has password logins disabled
   users.extraUsers.root.hashedPassword = secrets.pennyworth_hashedPassword;
 
+  services.mailz = {
+    domain = config.networking.hostName;
+    keydir = acmeKeyDir;
+    domains = secrets.email_domains;
+    users = {
+      yorick = {
+        password = secrets.yorick_mailPassword;
+        aliases = ["postmaster" "me" "ik" "info" "~"];
+      };
+    };
+  };
 
   nginxssl = {
     enable = true;
