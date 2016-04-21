@@ -1,3 +1,4 @@
+# DEPRECATED: use security.acme + ./nginx.nix on nixos >=16.03
 { config, lib, pkgs, ... }:
 let
 cfg = config.le_nginx;

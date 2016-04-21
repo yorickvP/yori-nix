@@ -7,11 +7,14 @@
 let
   secrets = import <secrets>;
   yoricc = import ../packages/yori-cc.nix;
+  acmeWebRoot = "/etc/sslcerts/acmeroot";
+  acmeKeyDir = "${config.security.acme.directory}/yori.cc";
 in
 {
   imports = [
       ./hardware-configuration.nix
       ../roles/common.nix
+      ../modules/nginx.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
@@ -25,48 +28,42 @@ in
   users.extraUsers.root.hashedPassword = secrets.pennyworth_hashedPassword;
 
 
-  services.nginx = {
+  nginxssl = {
     enable = true;
-    httpConfig = ''
-      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-
-      access_log  logs/access.log  main;
-      sendfile        on;
-      #tcp_nopush     on;
-
-      #keepalive_timeout  0;
-      keepalive_timeout  65;
-
-
-      gzip  on;
-
-      server {
-        listen       80;
-        server_name  "";
-
-        location / {
-          root   ${pkgs.nginx}/usr/share/nginx/html;
-          index  index.html index.htm;
-        }
-
-        location = /50x.html {
-          root   ${pkgs.nginx}/usr/share/nginx/html;
-        }
-      }
-
-      server {
-        listen 80;
-        server_name yori.cc;
-        server_tokens off;
+    challenges."${config.networking.hostName}" = acmeWebRoot;
+    servers."yori.cc" = {
+      key_root = acmeKeyDir;
+      key_webroot = acmeWebRoot;
+      contents = ''
         location / {
           root ${yoricc}/web;
         }
-      }
-
-    '';
+      '';
+    };
   };
-  networking.firewall.allowedTCPPorts = [80];
 
+
+  # Let's Encrypt configuration.
+  security.acme.certs."yori.cc" =
+    { email = secrets.email;
+      extraDomains = {
+        "${config.networking.hostName}" = null;
+      };
+      webroot = acmeWebRoot;
+      postRun = "systemctl reload nginx.service dovecot2.service opensmtpd.service";
+    };
+  # Generate a dummy self-signed certificate until we get one from
+  # Let's Encrypt.
+  system.activationScripts.letsEncryptKeys =
+    ''
+      dir=${acmeKeyDir}
+      mkdir -m 0700 -p $dir
+      if ! [[ -e $dir/key.pem ]]; then
+        ${pkgs.openssl}/bin/openssl genrsa -passout pass:foo -des3 -out $dir/key-in.pem 1024
+        ${pkgs.openssl}/bin/openssl req -passin pass:foo -new -key $dir/key-in.pem -out $dir/key.csr \
+          -subj "/C=NL/CN=www.example.com"
+        ${pkgs.openssl}/bin/openssl rsa -passin pass:foo -in $dir/key-in.pem -out $dir/key.pem
+        ${pkgs.openssl}/bin/openssl x509 -req -days 365 -in $dir/key.csr -signkey $dir/key.pem -out $dir/fullchain.pem
+      fi
+    '';
 }
