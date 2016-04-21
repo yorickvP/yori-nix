@@ -16,6 +16,7 @@ in
       ../roles/common.nix
       ../modules/mailz.nix
       ../modules/nginx.nix
+      ../modules/tor-hidden-service.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
@@ -78,4 +79,11 @@ in
         ${pkgs.openssl}/bin/openssl x509 -req -days 365 -in $dir/key.csr -signkey $dir/key.pem -out $dir/fullchain.pem
       fi
     '';
+
+  services.tor.hiddenServices = [
+    { name = "ssh";
+      port = 22;
+      hostname = "/run/keys/torkeys/ssh.pennyworth.hostname";
+      private_key = "/run/keys/torkeys/ssh.pennyworth.key"; }
+  ];
 }

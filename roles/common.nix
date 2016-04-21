@@ -36,6 +36,16 @@
   	challengeResponseAuthentication = false;
   };
 
+  services.tor = {
+    enable = true;
+    client.enable = true;
+  };
+
+  programs.ssh.extraConfig = ''
+    Host *.onion
+      ProxyCommand nc -xlocalhost:9050 -X5 %h %p
+  '';
+
   environment.systemPackages = with pkgs; [
     # v important.
     cowsay ponysay
