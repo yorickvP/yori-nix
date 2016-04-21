@@ -3,7 +3,7 @@ let
   ipconf = (import <secrets>).ipconf.${config.networking.hostName};
 in
 {
-  imports = [ ../nixos-in-place.nix ];
+  imports = [ ../modules/nixos-in-place.nix ];
   "nixos-in-place" = {
     enable = true;
     rootfs = "/dev/mapper/CAC_VG-CAC_LV";
