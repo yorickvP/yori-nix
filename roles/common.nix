@@ -68,7 +68,7 @@
     unzip zip
 
     # network
-    nmap mtr
+    nmap mtr bind
     socat netcat-openbsd
     lftp wget rsync
 
