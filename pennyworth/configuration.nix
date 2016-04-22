@@ -7,6 +7,7 @@
 let
   secrets = import <secrets>;
   yoricc = import ../packages/yori-cc.nix;
+  luadbi = pkgs.callPackage ../packages/luadbi.nix {};
   acmeWebRoot = "/etc/sslcerts/acmeroot";
   acmeKeyDir = "${config.security.acme.directory}/yori.cc";
 in
@@ -123,10 +124,18 @@ in
       use_libevent = true
       s2s_require_encryption = true
       c2s_require_encryption = true
+      archive_expires_after = "never"
+      storage = {
+        archive2 = "sql";
+      }
     '';
 
     admins = [ "yorick@yori.cc"];
   };
+  nixpkgs.config.packageOverrides = pkgs:
+    # FIXME: ugly hacks!
+    { prosody = pkgs.prosody.override { withZlib = true; luazlib = luadbi; };
+    };
   systemd.services.prosody.serviceConfig.PermissionsStartOnly = true;
   systemd.services.prosody.preStart = ''
       mkdir -m 0700 -p /var/lib/prosody/keys
