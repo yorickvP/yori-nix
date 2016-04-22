@@ -96,11 +96,19 @@ in
   ];
 
   # XMPP
-  services.prosody = {
+  services.prosody = let
+    # TODO: this should be in nixpkgs
+    prosodyModules = pkgs.fetchhg {
+      name = "prosody-modules-22042016";
+      rev = "e0b8b8a50013";
+      sha256 = "06qd46bmwjpzrygih91fv7z7g8z60kn0qyr7cf06a57a28117wdy";
+      url = "https://hg.prosody.im/prosody-modules/";
+    };
+  in {
     enable = true;
 
     allowRegistration = false;
-    extraModules = [ "private" "vcard" "privacy" "compression" "component" "muc" "pep" "adhoc" "lastactivity" "admin_adhoc" "blocklist"];
+    extraModules = [ "private" "vcard" "privacy" "compression" "muc" "pep" "adhoc" "lastactivity" "admin_adhoc" "blocklist" "mam" "carbons" "smacks"];
     virtualHosts.yoricc = {
       enabled = true;
       domain = "yori.cc";
@@ -109,7 +117,9 @@ in
         cert = "/var/lib/prosody/keys/fullchain.pem";
       };
     };
+    # TODO: Component "chat.yori.cc" "muc" # also proxy65 and pubsub?
     extraConfig = ''
+      plugin_paths = { "${prosodyModules}" }
       use_libevent = true
       s2s_require_encryption = true
       c2s_require_encryption = true
