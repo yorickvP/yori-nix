@@ -21,6 +21,8 @@ in
 
   networking.hostName = secrets.hostnames.pennyworth;
 
+  environment.noXlibs = true;
+
   services.openssh.enable = true;
   networking.enableIPv6 = lib.mkOverride 30 true;
 
@@ -29,6 +31,7 @@ in
   # root password is useful from console, ssh has password logins disabled
   users.extraUsers.root.hashedPassword = secrets.pennyworth_hashedPassword;
 
+  # email
   services.mailz = {
     domain = config.networking.hostName;
     keydir = acmeKeyDir;
@@ -41,6 +44,7 @@ in
     };
   };
 
+  # website + lets encrypt challenge hosting
   nginxssl = {
     enable = true;
     challenges."${config.networking.hostName}" = acmeWebRoot;
@@ -63,7 +67,9 @@ in
         "${config.networking.hostName}" = null;
       };
       webroot = acmeWebRoot;
-      postRun = "systemctl reload nginx.service dovecot2.service opensmtpd.service";
+      postRun = ''systemctl reload nginx.service dovecot2.service opensmtpd.service
+          systemctl restart prosody.service
+      '';
     };
   # Generate a dummy self-signed certificate until we get one from
   # Let's Encrypt.
@@ -80,10 +86,42 @@ in
       fi
     '';
 
+  # hidden SSH service
+
   services.tor.hiddenServices = [
     { name = "ssh";
       port = 22;
       hostname = "/run/keys/torkeys/ssh.pennyworth.hostname";
       private_key = "/run/keys/torkeys/ssh.pennyworth.key"; }
   ];
+
+  # XMPP
+  services.prosody = {
+    enable = true;
+
+    allowRegistration = false;
+    extraModules = [ "private" "vcard" "privacy" "compression" "component" "muc" "pep" "adhoc" "lastactivity" "admin_adhoc" "blocklist"];
+    virtualHosts.yoricc = {
+      enabled = true;
+      domain = "yori.cc";
+      ssl = {
+        key = "/var/lib/prosody/keys/key.pem";
+        cert = "/var/lib/prosody/keys/fullchain.pem";
+      };
+    };
+    extraConfig = ''
+      use_libevent = true
+      s2s_require_encryption = true
+      c2s_require_encryption = true
+    '';
+
+    admins = [ "yorick@yori.cc"];
+  };
+  systemd.services.prosody.serviceConfig.PermissionsStartOnly = true;
+  systemd.services.prosody.preStart = ''
+      mkdir -m 0700 -p /var/lib/prosody/keys
+      cp ${acmeKeyDir}/key.pem ${acmeKeyDir}/fullchain.pem /var/lib/prosody/keys
+      chown -R prosody:prosody /var/lib/prosody
+  '';
+  networking.firewall.allowedTCPPorts = [5222 5269];
 }
