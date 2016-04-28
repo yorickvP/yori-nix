@@ -18,6 +18,7 @@ in
       ../modules/mailz.nix
       ../modules/nginx.nix
       ../modules/tor-hidden-service.nix
+      ../modules/muflax-blog.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
@@ -143,4 +144,15 @@ in
       chown -R prosody:prosody /var/lib/prosody
   '';
   networking.firewall.allowedTCPPorts = [5222 5269];
+
+  services.muflax-blog = {
+    enable = true;
+    web-server = {
+      port = 9001;
+    };
+    hidden-service = {
+      hostname = "muflax65ngodyewp.onion";
+      private_key = "/run/keys/torkeys/http.muflax.key";
+    };
+  };
 }
