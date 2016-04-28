@@ -92,7 +92,7 @@ in
   services.tor.hiddenServices = [
     { name = "ssh";
       port = 22;
-      hostname = "/run/keys/torkeys/ssh.pennyworth.hostname";
+      hostname = secrets.tor_hostnames."ssh.pennyworth";
       private_key = "/run/keys/torkeys/ssh.pennyworth.key"; }
   ];
 

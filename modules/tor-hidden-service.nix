@@ -33,7 +33,7 @@ in {
         if ! [[ -e /var/lib/tor/${hiddenService.name}/private_key ]]; then
           mkdir -p /var/lib/tor/${hiddenService.name}/
           cp ${hiddenService.private_key} /var/lib/tor/${hiddenService.name}/private_key
-          cp ${hiddenService.hostname} /var/lib/tor/${hiddenService.name}/hostname
+          echo ${hiddenService.hostname} > /var/lib/tor/${hiddenService.name}/hostname
           chmod -R 700 /var/lib/tor/${hiddenService.name};
         fi
       '' else "true") hiddenServices);

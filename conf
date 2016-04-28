@@ -25,5 +25,5 @@ remote-deploy)
 	$0 remote nixops deploy ${@:2}
 	;;
 update-encrypt)
-	gpg -a -r yorick --encrypt-files secrets.nix deploy_key keys/*.hostname keys/*.key
+	gpg -a -r yorick --encrypt-files secrets.nix deploy_key keys/*.key
 esac
