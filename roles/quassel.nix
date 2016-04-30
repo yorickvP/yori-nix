@@ -7,7 +7,7 @@
       services.quassel = {
         # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix
         enable = true;
-        interface = "0.0.0.0";
+        interfaces = ["0.0.0.0"];
       };
       environment.systemPackages = [
         pkgs.quasselDaemon_qt5

@@ -22,7 +22,7 @@
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/ba95c638-f243-48ee-ae81-0c70884e7e74";
       fsType = "ext4";
-      options = "defaults,relatime,discard";
+      options = ["defaults" "relatime" "discard"];
     };
 
   swapDevices =

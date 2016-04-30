@@ -90,7 +90,7 @@ in
         };
         challenges = mkOption {
         	type = types.attrsOf types.string;
-        	default = [];
+        	default = {};
         	example = {"mail.domain.com" = "/var/lib/acme/mail.domain.com";};
         	description = "Other domains to host challenges for";
         };
