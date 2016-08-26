@@ -2,7 +2,7 @@
 
 let
   powersw = "/etc/powerdown/powerswitch";
-  powerswpath = [ pkgs.hdparm pkgs.iw pkgs.gawk pkgs.kmod config.system.sbin.modprobe ];
+  powerswpath = [ pkgs.hdparm pkgs.iw pkgs.gawk pkgs.kmod ];
 in
 {
 
