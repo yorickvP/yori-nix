@@ -12,4 +12,8 @@ with (import <secrets>).hostnames; {
 		imports = [./pennyworth/configuration.nix];
 		deployment.targetHost = pennyworth;
 	};
+	woodhouse = {
+		imports = [./woodhouse/configuration.nix];
+		deployment.targetHost = woodhouse;
+	};
 }
