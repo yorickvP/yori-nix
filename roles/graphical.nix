@@ -5,15 +5,13 @@
     enable = true;
     synaptics = {
       twoFingerScroll = true;
-      # inverted scrolling
-      additionalOptions = ''
-        Option "HorizScrollDelta" "-107"
-        Option "VertScrollDelta" "-107"
-      '';
+      horizontalScroll = true;
+      scrollDelta = -107; # inverted scrolling
     };
     layout = "us";
     displayManager.slim.defaultUser = "yorick";
     # xkbOptions = "eurosign:e";
+    windowManager.i3-gaps.enable = true;
   };
   hardware.opengl = {
     enable = true;

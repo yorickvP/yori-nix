@@ -22,11 +22,11 @@ echo "updating root conf"
 sh -c "$userspace_update_cmd"
 else
 	echo "updating" $1
-	./conf remote-deploy --include $1
 	HOST=$(nix-instantiate --eval -A hostnames.$1 secrets.nix | tr -d '"')
+	./conf remote-deploy $1 root@$HOST switch
 	echo "updating userspace"
-	# nix-copy-closure --to $HOST $(./conf remote nix-build --no-out-link "\<nixpkgs\>" -A hosts.woodhouse)
-	echo "nix-channel --update" | nixops ssh $1
+	#nix-copy-closure --to root@$HOST $(./conf remote nix-build --no-out-link "\<nixpkgs\>" -A hosts.$1)
+	echo "nix-channel --update" | ssh root@$HOST
 	cp deploy_key deploy_key2
 	chmod 0600 deploy_key2
 	ssh-agent bash <<J

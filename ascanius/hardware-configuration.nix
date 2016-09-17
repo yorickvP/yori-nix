@@ -64,4 +64,6 @@
     drivers = [ pkgs.gutenprint ];
   };
   nix.maxJobs = 8;
+
+  services.tcsd.enable = true; # it has a TPM. maybe use this?
 }

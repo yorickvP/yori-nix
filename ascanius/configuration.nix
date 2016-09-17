@@ -37,7 +37,4 @@ in
 
   users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
 
-  services.xserver = {
-    desktopManager.enlightenment.enable = true;
-  };
 }

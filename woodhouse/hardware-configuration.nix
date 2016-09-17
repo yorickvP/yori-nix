@@ -29,4 +29,5 @@
     ];
 
   nix.maxJobs = lib.mkDefault 4;
+  services.xserver.videoDrivers = ["intel"];
 }

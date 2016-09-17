@@ -15,8 +15,7 @@ in
       ../roles/graphical.nix
     ];
 
-  # Use the gummiboot efi boot loader.
-  boot.loader.gummiboot.enable = true;
+  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = secrets.hostnames.woodhouse;
@@ -30,6 +29,10 @@ in
 
 
   # List services that you want to enable:
+
+  hardware.opengl.driSupport32Bit = lib.mkOverride 30 false;
+  hardware.pulseaudio.support32Bit = lib.mkOverride 30 false;
+
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
@@ -52,14 +55,12 @@ in
   # services.xserver.desktopManager.kde4.enable = true;
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "16.03";
+  system.stateVersion = "16.09";
 
 
   services.redshift.enable = lib.mkOverride 30 false;
   services.xserver = {
-  	#windowManager.i3.enable = true;
-  	desktopManager.e19.enable = true;
-  	displayManager.slim.autoLogin = true;
+  	# displayManager.slim.autoLogin = true; # TODO: debug this
   };
 
   users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
