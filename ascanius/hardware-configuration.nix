@@ -14,13 +14,10 @@
       enable = true;
       device = "/dev/sda";
     };
+    kernelPackages = pkgs.linuxPackages_latest;
     kernelModules = ["nvidiabl" "kvm-intel"];
-    extraModulePackages = [pkgs.linuxPackages.nvidiabl];
-    extraModprobeConfig = ''
-      options nvidiabl min=0x384 max=0x4650
-    '';
   };
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = ["nouveau"];
   services.xserver.synaptics.enable = true;
 
   networking.wireless.enable = true;
@@ -33,7 +30,7 @@
   #'';
   # for now
   systemd.services."display-manager".preStart = ''
-   chmod a+w $(realpath /sys/class/backlight/nvidia_backlight/brightness) || true
+   chmod a+w $(realpath /sys/class/backlight/nv_backlight/brightness) || true
   '';
   # this makes sure my wifi doesn't take a minute to work
   services.udev.extraRules = ''
