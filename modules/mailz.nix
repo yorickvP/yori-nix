@@ -14,24 +14,8 @@ with lib;
 
 let
   cfg = config.services.mailz;
-
-  # Convert:
-  #
-  #   {
-  #     a = { aliases = [ "x", "y" ]; };
-  #     b = { aliases = [ "x" ]; };
-  #   }
-  #
-  # To:
-  #
-  #   {
-  #     x = [ "a" "b" ];
-  #     y = [ "a" ];
-  #   }
-  aliases = foldAttrs (user: users: [user] ++ users) [ ]
-    (flatten (flip mapAttrsToList cfg.users
-      (user: options: flip map options.aliases
-        (alias: { ${alias} = user; }))));
+  
+  alldomains = lib.concatLists (mapAttrsToList (n: usr: usr.domains) cfg.users);
 
   files = {
     credentials = pkgs.writeText "credentials"
@@ -45,20 +29,8 @@ let
         (flip mapAttrsToList cfg.users
           (user: options: "${user}:${options.password}:::::")));
 
-    recipients = pkgs.writeText "recipients"
-      (concatStringsSep "\n"
-        (flip concatMap cfg.domains (domain:
-          (map (user: "${user}@${domain}")
-            (attrNames cfg.users ++ flatten ((flip mapAttrsToList) cfg.users
-              (user: options: options.aliases)))))));
-
-    aliases = pkgs.writeText "aliases"
-      (concatStringsSep "\n"
-        (flip mapAttrsToList aliases
-          (alias: users: "${alias} ${concatStringsSep "," users}")));
-
     domains = pkgs.writeText "domains"
-      (concatStringsSep "\n" cfg.domains);
+      (concatStringsSep "\n" alldomains);
 
     spamassassinSieve = pkgs.writeText "spamassassin.sieve" ''
       require "fileinto";
@@ -67,14 +39,8 @@ let
       }
     '';
 
-    # From <https://github.com/OpenSMTPD/OpenSMTPD-extras/blob/master/extras/wip/filters/filter-regex/filter-regex.conf>
-    regex = pkgs.writeText "filter-regex.conf" ''
-      helo ! ^\[
-      helo ^\.
-      helo \.$
-      helo ^[^\.]*$
-    '';
   };
+
 
 in
 
@@ -119,17 +85,15 @@ in
         description = "Size of the generated DKIM key.";
       };
 
-      domains = mkOption {
-        type = types.listOf types.str;
-        description = "The domains to look for";
-        example = ["example.com"];
+      mainUser = mkOption {
+        example = "root";
+        type = types.str;
       };
 
       keydir = mkOption {
         type = types.str;
         description = "The place to look for the ssl key";
         default = "${config.security.acme.directory}/${cfg.domain}";
-        example = ["example.com"];
       };
 
       users = mkOption {
@@ -147,19 +111,16 @@ in
               <literal>smtpctl encrypt</literal>.
             '';
           };
-
-          aliases = mkOption {
+          domains = mkOption {
             type = types.listOf types.str;
-            default = [ ];
-            example = [ "postmaster" ];
-            description = "A list of aliases for this user.";
+            example = ["example.com"];
           };
+
         };
 
         example = {
           "foo" = {
             password = "encrypted";
-            aliases = [ "postmaster" ];
           };
           "bar" = {
             password = "encrypted";
@@ -170,62 +131,69 @@ in
   };
 
   config = mkIf (cfg.users != { }) {
-    nixpkgs.config.packageOverrides = pkgs: {
-      # opensmtpd = overrideDerivation pkgs.opensmtpd (oldAttrs: {
-      #   # Needed to listen on both IPv4 and IPv6
-      #   patches = oldAttrs.patches ++ [ ./opensmtpd.diff ];
-      # });
-      opensmtpd-extras = pkgs.opensmtpd-extras.override {
-        # Needed to have PRNG working in chroot (for dkim-signer)
-        openssl = pkgs.libressl;
-      };
-    };
-
     system.activationScripts.mailz = ''
       # Make sure SpamAssassin database is present
-      if ! [ -d /etc/spamassassin ]; then
-        cp -r ${pkgs.spamassassin}/share/spamassassin /etc
-      fi
+      #if ! [ -d /etc/spamassassin ]; then
+      #  cp -r ${pkgs.spamassassin}/share/spamassassin /etc
+      #fi
 
       # Make sure a DKIM private key exist
-      if ! [ -d ${cfg.dkimDirectory}/${head cfg.domains} ]; then
-        mkdir -p ${cfg.dkimDirectory}/${head cfg.domains}
-        chmod 700 ${cfg.dkimDirectory}/${head cfg.domains}
-        ${pkgs.opendkim}/bin/opendkim-genkey --bits ${toString cfg.dkimBits} --domain ${head cfg.domains} --directory ${cfg.dkimDirectory}/${head cfg.domains}
+      if ! [ -d ${cfg.dkimDirectory} ]; then
+        mkdir -p ${cfg.dkimDirectory}
+        chmod 700 ${cfg.dkimDirectory}
+        chown ${config.services.rmilter.user} ${cfg.dkimDirectory}
       fi
-    '';
-
-    services.spamassassin.enable = true;
-    # it turns out that the dkim header domain does not have to match the from address
-    # but it would be a nice-to-have
-    services.opensmtpd = {
+      # Generate missing keys
+      '' +
+      (lib.concatMapStringsSep "\n" (domain: ''
+      if ! [ -e ${cfg.dkimDirectory}/${domain}.default.key ]; then
+        ${pkgs.opendkim}/bin/opendkim-genkey --bits ${toString cfg.dkimBits} --domain ${domain} --directory ${cfg.dkimDirectory} --selector default
+        mv ${cfg.dkimDirectory}/default.private ${cfg.dkimDirectory}/${domain}.default.key 
+        mv ${cfg.dkimDirectory}/default.txt ${cfg.dkimDirectory}/${domain}.default.txt
+        chown ${config.services.rmilter.user} ${cfg.dkimDirectory}/${domain}.default.*
+      fi
+      '') alldomains);
+    services.rspamd.enable = true;
+    services.rmilter = {
       enable = true;
-      serverConfiguration = ''
-        filter filter-pause pause
-        filter filter-regex regex "${files.regex}"
-        filter filter-spamassassin spamassassin "-saccept"
-        filter filter-dkim-signer dkim-signer "-d${head cfg.domains}" "-p${cfg.dkimDirectory}/${head cfg.domains}/default.private"
-        filter in chain filter-pause filter-regex filter-spamassassin
-        filter out chain filter-dkim-signer
-
-        pki ${cfg.domain} certificate "${cfg.keydir}/fullchain.pem"
-        pki ${cfg.domain} key "${cfg.keydir}/key.pem"
-
-        table credentials file:${files.credentials}
-        table recipients file:${files.recipients}
-        table aliases file:${files.aliases}
-        table domains file:${files.domains}
-
-        listen on 0.0.0.0 port 25 hostname ${cfg.domain} filter in tls pki ${cfg.domain}
-        #listen on :: port 25 hostname ${cfg.domain} filter in tls pki ${cfg.domain}
-        listen on 0.0.0.0 port 587 hostname ${cfg.domain} filter out tls-require pki ${cfg.domain} auth <credentials>
-        #listen on :: port 587 hostname ${cfg.domain} filter out tls-require pki ${cfg.domain} auth <credentials>
-        enqueuer filter out
-
-        accept from any for domain <domains> recipient <recipients> alias <aliases> deliver to lmtp localhost:24
-        accept from local for any relay
+      socketActivation = false;
+      #debug = true;
+      rspamd.enable = true;
+      postfix.enable = true;
+      extraConfig = ''
+        dkim {
+            domain {
+              key = ${cfg.dkimDirectory};
+              domain = "*";
+              selector = "default";
+            };
+            header_canon = relaxed;
+            body_canon = relaxed;
+            sign_alg = sha256;
+        };
       '';
-      procPackages = [ pkgs.opensmtpd-extras ];
+    };
+
+    services.postfix = {
+      enable = true;
+      destination = alldomains ++ ["$myhostname" "localhost.$mydomain" "$mydomain" "localhost"];
+      sslCert = "${cfg.keydir}/fullchain.pem";
+      sslKey = "${cfg.keydir}/key.pem";
+      postmasterAlias = cfg.mainUser;
+      enableSubmission = true;
+      virtual = lib.concatStringsSep "\n" (lib.mapAttrsToList (name: usr:
+        lib.concatMapStringsSep "\n" (dom: "@${dom} ${name}") usr.domains) cfg.users);
+      extraConfig = ''
+        mailbox_transport = lmtp:unix:dovecot-lmtp
+      '';
+      submissionOptions = {
+        "smtpd_tls_security_level" = "encrypt";
+        "smtpd_sasl_auth_enable" = "yes";
+        "smtpd_sasl_type" = "dovecot";
+        "smtpd_sasl_path" = "/var/lib/postfix/auth";
+        "smtpd_client_restrictions" = "permit_sasl_authenticated,reject";
+        #"milter_macro_daemon_name" = "ORIGINATING";
+      };
     };
 
     services.dovecot2 = {
@@ -241,12 +209,21 @@ in
       enablePAM = false;
       sieveScripts = { before = files.spamassassinSieve; };
       extraConfig = ''
-        postmaster_address = postmaster@${head cfg.domains}
+        postmaster_address = postmaster@${head alldomains}
 
         service lmtp {
-          inet_listener lmtp {
-            address = 127.0.0.1 ::1
-            port = 24
+          unix_listener /var/lib/postfix/queue/dovecot-lmtp {
+            mode = 0660
+            user = postfix
+            group = postfix        
+          }
+        }
+        service auth {
+          unix_listener /var/lib/postfix/auth {
+            mode = 0660
+            # Assuming the default Postfix user and group
+            user = postfix
+            group = postfix        
           }
         }
 

@@ -21,9 +21,11 @@ in
         path = "/old-root/boot";
         devices = ["nodev"];
       }];
+      splashImage = null;
     };
     initrd.availableKernelModules = [ "xen_blkfront" ];
   };
+  sound.enable = false;
   networking = {
     usePredictableInterfaceNames = false; # only eth0
     interfaces.eth0 = {

@@ -23,6 +23,8 @@ in
 
   networking.hostName = secrets.hostnames.pennyworth;
 
+  services.nixosManual.enable = false;
+
   environment.noXlibs = true;
 
   services.openssh.enable = true;
@@ -37,15 +39,14 @@ in
   services.mailz = {
     domain = config.networking.hostName;
     keydir = acmeKeyDir;
-    domains = secrets.email_domains;
+    mainUser = "yorick";
     users = {
-      yorick = {
-        password = secrets.yorick_mailPassword;
-        aliases = ["postmaster" "me" "ik" "info" "~"];
+      yorick = with secrets; {
+        password = yorick_mailPassword;
+        domains = email_domains;
       };
     };
   };
-
   # website + lets encrypt challenge hosting
   nginxssl = {
     enable = true;
@@ -63,6 +64,7 @@ in
 
 
   # Let's Encrypt configuration.
+  security.acme.preliminarySelfsigned = true;
   security.acme.certs."yori.cc" =
     { email = secrets.email;
       extraDomains = {
@@ -73,19 +75,6 @@ in
           systemctl restart prosody.service
       '';
     };
-  # Generate a dummy self-signed certificate until we get one from
-  # Let's Encrypt.
-  system.activationScripts.letsEncryptKeys =
-    ''
-      dir=${acmeKeyDir}
-      mkdir -m 0700 -p $dir
-      if ! [[ -e $dir/key.pem ]]; then
-        ${pkgs.openssl}/bin/openssl genrsa -passout pass:foo -des3 -out $dir/key-in.pem 1024
-        ${pkgs.openssl}/bin/openssl req -passin pass:foo -new -key $dir/key-in.pem -out $dir/key.csr \
-          -subj "/C=NL/CN=www.example.com"
-        ${pkgs.openssl}/bin/openssl rsa -passin pass:foo -in $dir/key-in.pem -out $dir/key.pem
-        ${pkgs.openssl}/bin/openssl x509 -req -days 365 -in $dir/key.csr -signkey $dir/key.pem -out $dir/fullchain.pem
-      fi
     '';
 
   # hidden SSH service

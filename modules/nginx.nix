@@ -156,6 +156,7 @@ in
 	        mkdir -p /etc/nginx/
 	        ${pkgs.openssl}/bin/openssl dhparam -out /etc/nginx/dhparam.pem 2048
 	      fi
+	      # self-sign certs in case an invalid vhost is looked up
 	      dir=${cfg.no_vhost_keydir}
 	      mkdir -m 0700 -p $dir
 	      if ! [[ -e $dir/key.pem ]]; then
