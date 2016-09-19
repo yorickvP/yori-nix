@@ -3,7 +3,13 @@
 
 let
   cfg = config.services.muflax-blog;
-  blog = lib.overrideDerivation (pkgs.callPackage <muflax-blog/maintenance> {}) (default: {
+  muflax-source = pkgs.fetchFromGitHub {
+    rev = "e5ce7ae4296c6605a7e886c153d569fc38318096";
+    owner = "fmap";
+    repo = "muflax65ngodyewp.onion";
+    sha256 = "10n5km8mr7vjqlyb46drfhwzlrwranqaxpqc53a2hk9pqqckm8cx";
+  };
+  blog = lib.overrideDerivation (pkgs.callPackage "${muflax-source}/maintenance" {}) (default: {
     buildPhase = default.buildPhase + "\n" + ''
       grep -lr '[^@]muflax.com' out | xargs -r sed -i 's/\([^@]\)muflax.com/\1${cfg.hidden-service.hostname}/g'
     '';

@@ -11,7 +11,7 @@ local)
 	eval ${@:2}
 	;;
 remote)
-	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-16.09/nixexprs.tar.xz:nixos-config=`pwd`/$2/configuration.nix:ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix:muflax-blog=./vendor/muflax-blog
+	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-16.09/nixexprs.tar.xz:nixos-config=`pwd`/$2/configuration.nix:ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
 	eval ${@:3}
 	;;
 local-deploy)
