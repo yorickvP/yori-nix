@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# powerdown - powersave script
+# please use this with xset dpms, hdparm
+
+if [[ $EUID != 0 ]]; then
+    echo "[powerdown] must be run as root"
+    exit 1
+fi
+
+source $( dirname "${BASH_SOURCE[0]}" )/../lib/powerdown-functions
+lock
+
+# bus
+for i in /sys/bus/*/devices/*/power/control; do opt "$i" auto; done
+
+# usb autosuspend
+for i in /sys/bus/usb/devices/*/power/autosuspend; do opt "$i" 10; done
+usb_powersave
+
+# nmi_watchdog
+opt /proc/sys/kernel/nmi_watchdog 0
+
+# cpu
+for i in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do opt "$i" powersave; done
+#load_mod msr
+
+# kernel write mode
+opt /proc/sys/vm/laptop_mode 5
+opt /proc/sys/vm/dirty_ratio 90
+opt /proc/sys/vm/dirty_background_ratio 1
+opt /proc/sys/vm/dirty_expire_centisecs 60000
+opt /proc/sys/vm/dirty_writeback_centisecs 60000
+
+# disk
+for i in /sys/class/scsi_host/host*/link_power_management_policy; do opt "$i" min_power; done
+hdparm -y /dev/sda
+#for dev in $(awk '/^\/dev\/sd/ {print $1}' /etc/mtab); do run blockdev --setra 4096 "$dev"; done
+
+# sound card
+opt /sys/module/snd_hda_intel/parameters/power_save 1
+opt /sys/module/snd_hda_intel/parameters/power_save_controller Y
+
+# net
+for i in $(iw dev | awk '$1 == "Interface" { print $2 }'); do run iw dev "$i" set power_save on; done
+
+# screen
+for i in /sys/class/backlight/*; do opt "$i/brightness" "$(num_scale "$i/max_brightness" 1)"; done
+
+# webcam
+#unload_mod_recursive videodev
+
+# bluetooth
+#unload_mod_recursive bluetooth
+
+exit 0

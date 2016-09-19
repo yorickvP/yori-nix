@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+if [ `cat /sys/class/power_supply/AC/online` -eq 1 ]
+then
+	$( dirname "${BASH_SOURCE[0]}" )/powerup
+else
+	$( dirname "${BASH_SOURCE[0]}" )/powerdown
+fi

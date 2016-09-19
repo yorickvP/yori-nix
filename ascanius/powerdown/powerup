@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# powerdown - powerup
+#
+
+if [[ $EUID != 0 ]]; then
+    echo "[powerdown] must be run as root"
+    exit 1
+fi
+
+source $( dirname "${BASH_SOURCE[0]}" )/../lib/powerdown-functions
+lock
+
+# bus
+for i in /sys/bus/*/devices/*/power/control; do opt "$i" on; done
+
+# usb autosuspend
+for i in /sys/bus/usb/devices/*/power/autosuspend; do opt "$i" 600; done
+for i in /sys/bus/usb/devices/*/power/control; do opt "$i" on; done
+
+# nmi_watchdog
+opt /proc/sys/kernel/nmi_watchdog 1
+
+# cpu
+for i in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do opt "$i" performance; done
+
+
+# kernel write mode
+opt /proc/sys/vm/laptop_mode 0
+opt /proc/sys/vm/dirty_ratio 20
+opt /proc/sys/vm/dirty_background_ratio 10
+opt /proc/sys/vm/dirty_expire_centisecs 3000
+opt /proc/sys/vm/dirty_writeback_centisecs 500
+
+# disk
+for i in /sys/class/scsi_host/host*/link_power_management_policy; do opt "$i" medium_power; done
+hdparm -y /dev/sda
+
+# sound card
+opt /sys/module/snd_hda_intel/parameters/power_save 0
+opt /sys/module/snd_hda_intel/parameters/power_save_controller Y
+
+# net
+for i in $(iw dev | awk '$1 == "Interface" { print $2 }'); do run iw dev "$i" set power_save off; done
+
+# screen
+for i in /sys/class/backlight/*; do opt "$i/brightness" "$(num_scale "$i/max_brightness" 5 )"; done
+
+# webcam
+load_mod videodev
+
+# bluetooth
+load_mod bluetooth
+
+
+# i915
+#opt /sys/module/i915/parameters/i915_enable_rc6 0
+exit 0
