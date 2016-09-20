@@ -19,6 +19,7 @@ in
       ../modules/nginx.nix
       ../modules/tor-hidden-service.nix
       ../modules/muflax-blog.nix
+      ../modules/backup.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
@@ -44,6 +45,18 @@ in
       yorick = with secrets; {
         password = yorick_mailPassword;
         domains = email_domains;
+      };
+    };
+  };
+  services.backup = {
+    enable = true;
+    backups = {
+      mail = {
+        dir = "/var/spool/mail";
+        user = config.services.mailz.user;
+        remote = "webdavs://mail@yorickvp.stackstorage.com/remote.php/webdav//mail_bak";
+        keyfile = "/var/backup/mail_creds";
+        interval = "daily";
       };
     };
   };
