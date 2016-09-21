@@ -12,28 +12,28 @@ in
       type = types.loaOf types.optionSet;
       options = {
         dir = mkOption { type = types.str; };
-        user = mkOption { type = types.str; };
         remote = mkOption { type = types.str; };
         keyfile = mkOption { type = types.str; };
+        keyid = mkOption { type = types.str; default = "root"; };
         exclude = mkOption { type = types.str; default = ""; };
         interval = mkOption { type = types.str; default = "weekly"; };
       };
     };
   };
   config = mkIf cfg.enable {
+    # TODO: generate key in pre-start?
     systemd.services = let
       sectionToService = name: data: with data; {
         description = "Back up ${name}";
         serviceConfig = {
           IOSchedulingClass="idle";
-          User=user;
           #Type = "oneshot";
         };
         script = ''
           source ${keyfile}
           ${pkgs.duplicity}/bin/duplicity ${dir} ${remote} \
             --ssl-cacert-file /etc/ssl/certs/ca-bundle.crt \
-            --encrypt-key ${user} \
+            --encrypt-key ${keyid} \
             --exclude-filelist ${pkgs.writeText "dupignore" exclude} \
             --asynchronous-upload \
             --volsize 100 \

@@ -53,9 +53,8 @@ in
     backups = {
       mail = {
         dir = "/var/spool/mail";
-        user = config.services.mailz.user;
         remote = "webdavs://mail@yorickvp.stackstorage.com/remote.php/webdav//mail_bak";
-        keyfile = "/var/backup/mail_creds";
+        keyfile = "/var/backup/creds";
         interval = "daily";
       };
     };
