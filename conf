@@ -18,7 +18,7 @@ local-deploy)
 	sudo $0 local nixos-rebuild switch
 	;;
 remote-deploy)
-	$0 remote $2 nixos-rebuild --build-host localhost --target-host ${@:3}
+	$0 remote $2 nixos-rebuild --build-host localhost --target-host root@$2 switch
 	;;
 update-encrypt)
 	gpg -a -r yorick --encrypt-files secrets.nix deploy_key keys/*.key
