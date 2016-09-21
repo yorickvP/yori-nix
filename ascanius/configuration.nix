@@ -36,5 +36,9 @@ in
   virtualisation.virtualbox.host.enable = true;
 
   users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
-
+  services.xserver.displayManager.sessionCommands = ''
+    gpg-connect-agent /bye
+    unset SSH_AGENT_PID
+    export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+  '';
 }
