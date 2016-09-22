@@ -13,6 +13,10 @@
     loader.grub = {
       enable = true;
       device = "/dev/sda";
+      trustedBoot = {
+        enable = true;
+        systemHasTPM = "YES_TPM_is_activated";
+      };
     };
     kernelPackages = pkgs.linuxPackages_latest;
     kernelModules = ["nvidiabl" "kvm-intel"];
@@ -63,4 +67,5 @@
   nix.maxJobs = 8;
 
   services.tcsd.enable = true; # it has a TPM. maybe use this?
+  environment.systemPackages = with pkgs; [tpm-tools];
 }
