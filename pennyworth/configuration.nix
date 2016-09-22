@@ -68,6 +68,15 @@ in
       key_webroot = acmeWebRoot;
       contents = ''
         location / {
+          rewrite ^(.*) https://yorickvanpelt.nl$1 permanent;
+        }
+      '';
+    };
+    servers."yorickvanpelt.nl" = {
+      key_root = acmeKeyDir;
+      key_webroot = acmeWebRoot;
+      contents = ''
+        location / {
           root ${yoricc}/web;
         }
       '';
@@ -81,9 +90,10 @@ in
     { email = secrets.email;
       extraDomains = {
         "${config.networking.hostName}" = null;
+        "yorickvanpelt.nl" = null;
       };
       webroot = acmeWebRoot;
-      postRun = ''systemctl reload nginx.service dovecot2.service opensmtpd.service
+      postRun = ''systemctl reload nginx.service dovecot2.service postfix.service
           systemctl restart prosody.service
       '';
     };

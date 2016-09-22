@@ -3,12 +3,12 @@ with import <nixpkgs> {};
 let gogitget = callPackage ./gogitget.nix {}; in
 
 stdenv.mkDerivation {
-  name = "yori-cc-1.1";
+  name = "yori-cc-1.2";
   
   src = gogitget {
-    url = "git@git.yori.cc:yorick/yori-cc.git";
-    rev = "b5ca927b1c725b4a674a73f546d010be739472ff";
-    sha256 = "3e4c25358d96b6fc3819b7b74e33c84de508c930910399784af2bd3a82c1f3bd";
+    "url" = "git@git.yori.cc:yorick/yori-cc.git";
+    "rev" = "6e73c0152a9e5b0109e714fb57ca0d401cbf27a1";
+    "sha256" ="1zmwl5rlbd80ml0qng1n0xh0mkps1nsmngnvcqjbb3247692lvpj";
   };
   
   buildInputs = [ ];
@@ -20,7 +20,7 @@ stdenv.mkDerivation {
 
   meta = {
     description = "Yori-cc website";
-    homepage = http://yori.cc;
+    homepage = https://yorickvanpelt.nl;
     maintainers = [ "Yorick" ];
   };
 }
