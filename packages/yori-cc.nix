@@ -3,12 +3,12 @@ with import <nixpkgs> {};
 let gogitget = callPackage ./gogitget.nix {}; in
 
 stdenv.mkDerivation {
-  name = "yori-cc-1.2";
+  name = "yori-cc-1.3";
   
   src = gogitget {
     "url" = "git@git.yori.cc:yorick/yori-cc.git";
-    "rev" = "6e73c0152a9e5b0109e714fb57ca0d401cbf27a1";
-    "sha256" ="1zmwl5rlbd80ml0qng1n0xh0mkps1nsmngnvcqjbb3247692lvpj";
+    "rev" = "db207b9fd74a1036d2272c38dcbb6de504cf590a";
+    "sha256" = "1rqsv7pdij15f6nxxwggw58q12ggl6g7gjjq73sbdz1v9x78xbzp";
   };
   
   buildInputs = [ ];
