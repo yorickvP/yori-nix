@@ -11,7 +11,11 @@
     layout = "us";
     displayManager.slim.defaultUser = "yorick";
     # xkbOptions = "eurosign:e";
-    windowManager.i3-gaps.enable = true;
+    windowManager.i3 = {
+      enable = true;
+    } // (if (lib.versionAtLeast config.system.nixosRelease "17.03") then {
+      package = pkgs.i3-gaps;
+      } else {});
   };
   hardware.opengl = {
     enable = true;
@@ -40,4 +44,7 @@
       night = 5500;
     };
   };
+  # spotify
+  networking.firewall.allowedTCPPorts = [57621];
+  networking.firewall.allowedUDPPorts = [57621];
 }

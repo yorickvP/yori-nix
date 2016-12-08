@@ -6,6 +6,7 @@
 	users.extraUsers.root = {
 		openssh.authorizedKeys.keys = config.users.extraUsers.yorick.openssh.authorizedKeys.keys;
 	};
+  services.timesyncd.enable = true;
 	users.extraUsers.yorick = {
 	  isNormalUser = true;
 	  uid = 1000;
@@ -26,6 +27,8 @@
   nix.extraOptions = ''
     allow-unsafe-native-code-during-evaluation = true
     allow-unfree = true
+    binary-caches-parallel-connections = 3
+    connect-timeout = 5
   '';
 
   # Networking
