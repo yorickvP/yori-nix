@@ -47,7 +47,7 @@ INSTALL_LOCK = true
 inherit (lib) mkOption types;
 in
 {
-    imports = [./nginx.nix];
+    #imports = [./nginx.nix];
     options.gogs = {
       domain = mkOption {
         type = types.string;
@@ -72,28 +72,15 @@ in
       WorkingDirectory = gitHome;
     };
   };
-  nginxssl.servers.${domain} = {
-    key_root = "/var/lib/acme/git.yori.cc";
-    key_webroot = "/etc/sslcerts/acmeroot";
-    contents = ''
-      location / {
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Server $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
+  services.nginx.virtualHosts.${domain} = {
+    forceSSL = true;
+    enableACME = true;
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${toString gogsPort}";
+      extraConfig = ''
         proxy_buffering off;
-        proxy_pass http://gogs;
-        client_max_body_size 30M;
-        break;
-      }
-    '';
+      '';
+    };
   };
-  services.nginx.httpConfig = ''
-    upstream gogs {
-      server 127.0.0.1:${toString gogsPort};
-    }
-  '';
 };
 }

@@ -3,24 +3,16 @@ let
 cfg = config.nginxssl;
 sslcfg = dir: ''
     ssl on;
-  	ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
     ssl_certificate_key ${dir}/key.pem;
     ssl_certificate ${dir}/fullchain.pem;
     ssl_trusted_certificate ${dir}/fullchain.pem;
-    ssl_dhparam /etc/nginx/dhparam.pem;
-    ssl_protocols TLSv1.1 TLSv1.2;
-    # ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
-    ssl_prefer_server_ciphers on;
     add_header Strict-Transport-Security max-age=15768000;
-    ssl_stapling on;
-    ssl_stapling_verify on;
 '';
 
 makeChallenges = servername: key_webroot: ''
 	server {
 		listen 80;
 		server_name ${servername};
-		server_tokens off;
 		location /.well-known/acme-challenge {
 			default_type text/plain;
 			alias ${key_webroot}/.well-known/acme-challenge;
@@ -43,7 +35,6 @@ makeServerBlock = servername: {key_root, key_webroot, contents, ...}: ''
 	server {
 		listen       443;
 		server_name  ${servername};
-		server_tokens off;
 		${sslcfg key_root}
 		${contents}
 	}
@@ -98,50 +89,26 @@ in
     config = mkIf cfg.enable {
 	  services.nginx = {
 	    enable = true;
-	    httpConfig = ''
-	      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-	                        '$status $body_bytes_sent "$http_referer" '
-	                        '"$http_user_agent" "$http_x_forwarded_for"';
+	    recommendedTlsSettings = true;
+	    recommendedGzipSettings = true;
+	    recommendedProxySettings = true;
+	    recommendedOptimisation = true;
+	    serverTokens = false;
+	    sslDhparam = "/etc/nginx/dhparam.pem";
+	    virtualHosts = {
+	    	"\"\"" = {
+	    		forceSSL = true;
+	    		locations."/" = {
+	    			index = "index.html index.htm";
+	    			root = "${pkgs.nginx}/html";
+	    		};
+	    		sslCertificate = "${cfg.no_vhost_keydir}/fullchain.pem";
+	    		sslCertificateKey = "${cfg.no_vhost_keydir}/key.pem";
+	    		default = true;
+	    	};
+	    };
 
-	      access_log  logs/access.log  main;
-	      sendfile        on;
-	      #tcp_nopush     on;
-
-	      #keepalive_timeout  0;
-	      keepalive_timeout  65;
-
-	      server_tokens off;
-
-	      ssl_session_cache   shared:SSL:10m;
-	      ssl_session_timeout 10m;
-
-
-	      gzip  on;
-	      # the default thing, for if no vhost is given
-	      # generate default.pem and default.key manually
-	      # and self-sign, if you feel like it
-	      server {
-	      	listen 80 default_server;
-	      	server_name "";
-	      	location / {
-	      		rewrite ^(.*) https://$host$1 permanent;
-	      	}
-	      }
-	      server {
-	        listen       443 default_server spdy deferred;
-	        server_name  "";
-
-	        ${sslcfg cfg.no_vhost_keydir}
-
-	        location / {
-	          root   ${pkgs.nginx}/html;
-	          index  index.html index.htm;
-	        }
-
-	        location = /50x.html {
-	          root   ${pkgs.nginx}/html;
-	        }
-	      }
+	    appendHttpConfig = ''
 
 	      ${lib.concatStringsSep "\n" (lib.mapAttrsToList makeChallenges cfg.challenges)}
 

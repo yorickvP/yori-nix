@@ -2,10 +2,10 @@
 { nixpkgs ? import <nixpkgs> {} }: with nixpkgs;
 stdenv.mkDerivation rec {
   name = "gogs-${version}";
-  version = "0.9.0";
+  version = "0.9.113";
   src = fetchzip {
     url = "https://dl.gogs.io/gogs_v${version}_linux_amd64.tar.gz";
-    sha256 = "1qyy0hi8hvz2k4p9251mx8xv9z08jwijfzl0rn0drm6sq34a7wg9";
+    sha256 = "0gwpshzch1b0s810pd5cpiad1skvnjhsd6kx9gmlbw2whdp2jf2r";
   };
   buildPhase = ''
     patchelf \
