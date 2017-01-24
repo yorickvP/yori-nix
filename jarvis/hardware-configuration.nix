@@ -2,15 +2,10 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 { config, lib, pkgs, ... }:
-let
-kpkgs = pkgs.linuxPackages_testing;
-#kpkgs = pkgs.linuxPackages_custom (pkgs.linuxPackages_latest.kernel.overrideDerivation (oldAttr: {
-#  enableParallelBuild = true;
-#}));
-in
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      ./linux-nvme.nix
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
@@ -26,27 +21,7 @@ in
 
   networking.wireless.enable = true;
   hardware.bluetooth.enable = true;
-  boot.kernelPackages = kpkgs;
   boot.kernelParams = ["i915.enable_fbc=1"]; # "i915.enable_psr=1"]; # lvds downclock is no longer a thing
-  boot.kernelPatches = let
-    kver = "4.8.8"; #kpkgs.kernel.version;
-    linux-nvme = pkgs.fetchFromGitHub {
-      owner = "damige";
-      repo = "linux-nvme";
-      rev = "e58f5a1e9357fb0647fc173a17ceebe6280ba43c";
-      sha256 = "0n42s6a6wzckm5k6mfpx0mp66ql52wv3irs9s0c000nx039hg57m";
-    };
-  in [
-   # half of thesea are in 4.9 already
-   # { patch = "${linux-nvme}/src/${kver}/nvmepatch1-V4.patch"; name = "nvme-1";}
-   # { patch = "${linux-nvme}/src/${kver}/nvmepatch2-V4.patch"; name = "nvme-2";}
-    { patch = "${linux-nvme}/src/${kver}/nvmepatch3-V4.patch"; name = "nvme-3";}
-  ];
-  # nixpkgs.config.packageOverrides = pkgs:
-  #   { linux_testing = pkgs.linux_testing.overrideDerivation (attrs: {
-  #     enableParallelBuilding = true;
-  #     });
-  #   };
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/a751e4ea-f1aa-48e1-9cbe-423878e29b62";
@@ -85,10 +60,5 @@ in
 
   services.xserver.videoDrivers = ["modesetting"];
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
-  nixpkgs.config = {
-    packageOverrides = pkgs : {
-      mpv = pkgs.mpv.override { vaapiSupport = true; };
-    };
-  };
 
 }

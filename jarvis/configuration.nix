@@ -48,4 +48,6 @@ in
     export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
     ${pkgs.xorg.xrandr}/bin/xrandr --dpi 192
   '';
+  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
+
 }
