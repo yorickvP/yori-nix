@@ -51,4 +51,5 @@ in
       hostname = secrets.tor_hostnames."ssh.ascanius";
       private_key = "/run/keys/torkeys/ssh.ascanius.key"; }
   ];
+  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
 }
