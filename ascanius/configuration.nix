@@ -11,6 +11,7 @@ in
     [ ./hardware-configuration.nix
       ../roles/common.nix
       ../roles/graphical.nix
+      ../modules/tor-hidden-service.nix
     ];
 
   # no, not that Ascanius.
@@ -43,4 +44,11 @@ in
     unset SSH_AGENT_PID
     export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
   '';
+
+  services.tor.hiddenServices = [
+    { name = "ssh";
+      port = 22;
+      hostname = secrets.tor_hostnames."ssh.ascanius";
+      private_key = "/run/keys/torkeys/ssh.ascanius.key"; }
+  ];
 }
