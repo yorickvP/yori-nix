@@ -22,6 +22,7 @@ in
       ../modules/tor-hidden-service.nix
       ../modules/muflax-blog.nix
       ../modules/backup.nix
+      ./asterisk.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
