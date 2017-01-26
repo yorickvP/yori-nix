@@ -28,7 +28,7 @@ in with lib; {
   config = mkIf cfg.enable {
     services.nginx = {
       enable = true;
-      httpConfig = ''
+      appendHttpConfig = ''
         server {
           index index.html;
           port_in_redirect off;
