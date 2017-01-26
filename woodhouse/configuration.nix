@@ -11,6 +11,7 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../roles/common.nix
+      ../roles/collectd.nix
       ../modules/tor-hidden-service.nix
       ../roles/graphical.nix
     ];

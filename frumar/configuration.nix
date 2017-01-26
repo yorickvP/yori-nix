@@ -17,6 +17,7 @@ in
       ../modules/tor-hidden-service.nix
       ../roles/quassel.nix
       ../roles/pub.nix
+      ../roles/collectd.nix
     ];
 
 

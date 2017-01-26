@@ -15,6 +15,8 @@ in
   imports = [
       ./hardware-configuration.nix
       ../roles/common.nix
+      ../roles/collectd.nix
+      ../roles/graphs.nix
       ../modules/mailz.nix
       ../modules/nginx.nix
       ../modules/tor-hidden-service.nix
