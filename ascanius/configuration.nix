@@ -25,6 +25,8 @@ in
     allowUnfree = true;
     packageOverrides = pkgs : {
       bluez = pkgs.bluez5;
+      # https://github.com/NixOS/nixpkgs/issues/22099
+      trustedGrub = pkgs.trustedGrub.overrideDerivation (attr: {NIX_CFLAGS_COMPILE = "-Wno-error";});
     };
   };
 
