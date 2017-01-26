@@ -16,7 +16,7 @@
   hardware.cpu.intel.updateMicrocode = true;
 
 
-  services.xserver.synaptics.enable = true;
+  services.xserver.libinput.enable = true;
   services.thermald.enable = true;
 
   networking.wireless.enable = true;

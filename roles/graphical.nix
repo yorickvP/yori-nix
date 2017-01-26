@@ -8,6 +8,10 @@
       horizontalScroll = true;
       scrollDelta = -107; # inverted scrolling
     };
+    libinput = {
+      naturalScrolling = true;
+      tappingDragLock = false;
+    };
     layout = "us";
     displayManager.slim.defaultUser = "yorick";
     # xkbOptions = "eurosign:e";
