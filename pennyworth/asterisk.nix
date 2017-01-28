@@ -43,12 +43,12 @@
 	#networking.firewall.allowedUDPPorts = [5060];
 	#networking.firewall.allowedTCPPorts = [5060];
 	networking.firewall.extraCommands = ''
-	    iptables -A nixos-fw -p udp --dport 5060 -s 193.169.138.0/23 -j nixos-fw-accept
-	    iptables -A nixos-fw -p udp --dport 5060 -s 91.232.130.0/24 -j nixos-fw-accept
-	    iptables -A nixos-fw -p udp --dport 5060 -s 81.205.5.19 -j nixos-fw-accept
-	    iptables -A nixos-fw -p tcp --dport 5060 -s 193.169.138.0/23 -j nixos-fw-accept
-	    iptables -A nixos-fw -p tcp --dport 5060 -s 91.232.130.0/24 -j nixos-fw-accept
-	    iptables -A nixos-fw -p tcp --dport 5060 -s 81.205.5.19 -j nixos-fw-accept
+	    iptables -A nixos-fw -p udp -s 193.169.138.0/23 -j nixos-fw-accept
+	    iptables -A nixos-fw -p udp -s 91.232.130.0/24 -j nixos-fw-accept
+	    iptables -A nixos-fw -p udp -s 81.205.5.19 -j nixos-fw-accept
+	    iptables -A nixos-fw -p tcp -s 193.169.138.0/23 -j nixos-fw-accept
+	    iptables -A nixos-fw -p tcp -s 91.232.130.0/24 -j nixos-fw-accept
+	    iptables -A nixos-fw -p tcp -s 81.205.5.19 -j nixos-fw-accept
 	'';
 	# nixpkgs.config = {
 	#   packageOverrides = pkgs : {
