@@ -21,6 +21,7 @@ in
       LoadPlugin tcpconns
       LoadPlugin uptime
       LoadPlugin users
+      LoadPlugin sensors
        
        
       <Plugin tcpconns>
