@@ -5,20 +5,15 @@ then
 	sudo chgrp nixbld deploy_key
 	chmod 640 deploy_key
 fi
+export NIX_PATH="ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
 case $1 in
-local)
-	export NIX_PATH=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/ascanius/configuration.nix:secrets=`pwd`/secrets.nix
-	eval ${@:2}
-	;;
-remote)
-	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-16.09/nixexprs.tar.xz:nixos-config=`pwd`/$2/configuration.nix:ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
+stable)
+	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-16.09/nixexprs.tar.xz:nixos-config=`pwd`/$2/configuration.nix:$NIX_PATH"
 	eval ${@:3}
 	;;
-local-deploy)
-	sudo $0 local nixos-rebuild switch
-	;;
-remote-deploy)
-	$0 remote $2 nixos-rebuild --build-host localhost --target-host root@$2 switch
+channel)
+	export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/$2/configuration.nix:$NIX_PATH"
+	eval ${@:3}
 	;;
 update-encrypt)
 	gpg -a -r yorick --encrypt-files secrets.nix deploy_key keys/*.key
