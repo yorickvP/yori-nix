@@ -10,7 +10,7 @@ in
 {
   imports =
     [ # Include the results of the hardware scan.
-      ../psysical/frumar.nix
+      ../psysical/fractal.nix
       ../roles/common.nix
      ../modules/nginx.nix
       ../modules/gogs.nix # todo: better separation here

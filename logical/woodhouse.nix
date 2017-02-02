@@ -9,7 +9,7 @@ in
 {
   imports =
     [ # Include the results of the hardware scan.
-      ../physical/woodhouse.nix
+      ../physical/nuc.nix
       ../roles/common.nix
       ../roles/collectd.nix
       ../modules/tor-hidden-service.nix

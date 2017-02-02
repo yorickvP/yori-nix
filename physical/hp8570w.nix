@@ -4,7 +4,7 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      ./powerdown.nix
+      ./hp8570w/powerdown.nix
     ];
 
   hardware.cpu.intel.updateMicrocode = true;

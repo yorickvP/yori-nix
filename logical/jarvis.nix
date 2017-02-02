@@ -7,7 +7,7 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      ../physical/xps9360.nix
       ../roles/common.nix
       ../roles/workstation.nix
     ];

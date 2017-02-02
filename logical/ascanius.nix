@@ -8,7 +8,7 @@ let secrets = import <secrets>;
 in
 {
   imports =
-    [ ./hardware-configuration.nix
+    [ ../physical/hp8570w.nix
       ../roles/common.nix
       ../roles/workstation.nix
       ../modules/tor-hidden-service.nix

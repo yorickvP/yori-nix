@@ -13,7 +13,7 @@ let
 in
 {
   imports = [
-      ../physical/pennyworth.nix
+      ../physical/kassala.nix
       ../roles/common.nix
       ../roles/collectd.nix
       ../roles/graphs.nix
