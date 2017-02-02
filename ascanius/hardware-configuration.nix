@@ -59,13 +59,12 @@
       fsType = "ext2";
     };
 
+
+
   swapDevices = [ ];
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.gutenprint ];
-  };
+
   nix.maxJobs = 8;
 
   services.tcsd.enable = true; # it has a TPM. maybe use this?
-  environment.systemPackages = with pkgs; [tpm-tools];
+  environment.systemPackages = with pkgs; [btrfs-progs tpm-tools];
 }

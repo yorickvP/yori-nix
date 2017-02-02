@@ -31,13 +31,9 @@ in
 
   environment.noXlibs = true;
 
-  services.openssh.enable = true;
   networking.enableIPv6 = lib.mkOverride 30 true;
 
   system.stateVersion = "16.03";
-
-  # root password is useful from console, ssh has password logins disabled
-  users.extraUsers.root.hashedPassword = secrets.pennyworth_hashedPassword;
 
   # email
   services.mailz = {

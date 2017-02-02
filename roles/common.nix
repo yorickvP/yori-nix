@@ -1,3 +1,5 @@
+let secrets = import <secrets>;
+in
 { config, pkgs, lib, ...}:
 {
 	imports = [];
@@ -5,6 +7,9 @@
 	users.mutableUsers = false;
 	users.extraUsers.root = {
 		openssh.authorizedKeys.keys = config.users.extraUsers.yorick.openssh.authorizedKeys.keys;
+    # root password is useful from console, ssh has password logins disabled
+    hashedPassword = secrets.pennyworth_hashedPassword; # TODO: generate own
+
 	};
   services.timesyncd.enable = true;
 	users.extraUsers.yorick = {
@@ -36,6 +41,7 @@
   networking.enableIPv6 = false;
 
   services.openssh = {
+    enable = true;
   	passwordAuthentication = false;
   	challengeResponseAuthentication = false;
   };

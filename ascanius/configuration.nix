@@ -10,7 +10,7 @@ in
   imports =
     [ ./hardware-configuration.nix
       ../roles/common.nix
-      ../roles/graphical.nix
+      ../roles/workstation.nix
       ../modules/tor-hidden-service.nix
     ];
 
@@ -22,7 +22,6 @@ in
   systemd.services.scsi-link-pm.enable = false;
 
   nixpkgs.config = {
-    allowUnfree = true;
     packageOverrides = pkgs : {
       bluez = pkgs.bluez5;
       # https://github.com/NixOS/nixpkgs/issues/22099
@@ -30,22 +29,6 @@ in
     };
   };
 
-  services.openssh.enable = true;
-
-  # List packages installed in system profile. To search by name, run:
-  # $ nix-env -qaP | grep wget
-  environment.systemPackages = with pkgs; [
-    btrfs-progs ghostscript
-  ];
-
-  virtualisation.virtualbox.host.enable = true;
-
-  users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
-  services.xserver.displayManager.sessionCommands = ''
-    gpg-connect-agent /bye
-    unset SSH_AGENT_PID
-    export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
-  '';
 
   services.tor.hiddenServices = [
     { name = "ssh";

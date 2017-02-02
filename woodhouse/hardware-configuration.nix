@@ -13,6 +13,9 @@
   boot.extraModulePackages = [ ];
   hardware.cpu.intel.updateMicrocode = true;
 
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/fa5026b1-0f73-4233-a417-780c65f3f038";
@@ -30,4 +33,8 @@
 
   nix.maxJobs = lib.mkDefault 4;
   services.xserver.videoDrivers = ["intel"];
+
+  environment.systemPackages = with pkgs; [
+    btrfs-progs
+  ];
 }

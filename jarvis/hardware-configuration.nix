@@ -13,6 +13,12 @@
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = ["psmouse"];
   
+
+  # Use the systemd-boot EFI boot loader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+
   hardware.cpu.intel.updateMicrocode = true;
 
 
@@ -44,6 +50,8 @@
     ];
 
   nix.maxJobs = lib.mkDefault 4;
+
+  environment.systemPackages = [pkgs.btrfs-progs];
   
   # ideal... doesn't work.
   #services.udev.extraRules = ''
@@ -60,5 +68,6 @@
 
   services.xserver.videoDrivers = ["modesetting"];
   hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
-
+  # bigger console font
+  i18n.consoleFont = "latarcyrheb-sun32";
 }

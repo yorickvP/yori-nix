@@ -23,9 +23,6 @@ in
 
   networking.hostName = secrets.hostnames.frumar;
 
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "15.09";
 

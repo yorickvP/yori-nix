@@ -1,5 +1,10 @@
+let secrets = import <secrets>;
+in
 { config, lib, pkgs, ... }:
 {
+  options.yorick.support32bit = with lib;
+    mkOption { type = types.bool; default = false; };
+  config = {
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
@@ -23,10 +28,10 @@
   };
   hardware.opengl = {
     enable = true;
-    driSupport32Bit = true;
+    driSupport32Bit = config.yorick.support32bit;
   };
   hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.support32Bit = true;
+  hardware.pulseaudio.support32Bit = config.yorick.support32bit;
 
   fonts = {
     enableFontDir = true;
@@ -39,16 +44,10 @@
       source-han-sans-japanese
     ];
   };
-  services.redshift = {
-    enable = true;
-    latitude = "51.8";
-    longitude = "5.8";
-    temperature = {
-      day = 6500;
-      night = 5500;
-    };
-  };
   # spotify
   networking.firewall.allowedTCPPorts = [57621];
   networking.firewall.allowedUDPPorts = [57621];
+
+  users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
+};
 }
