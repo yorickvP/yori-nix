@@ -97,5 +97,8 @@ in
     rxvt_unicode.terminfo
   ];
   nix.gc.automatic = true;
+
+  security.acme.preliminarySelfsigned = true;
+
 }
 

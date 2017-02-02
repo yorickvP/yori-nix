@@ -28,8 +28,6 @@ in
 
   gogs.domain = "git.yori.cc";
   nginxssl.enable = true;
-  # Let's Encrypt configuration.
-  security.acme.preliminarySelfsigned = true;
 
   # hidden SSH service
 

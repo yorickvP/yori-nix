@@ -9,7 +9,7 @@ Systems
 
 Physical server. Mostly used for files. (storage: 6 TB hdd + 256GB ssd, RAM: 8GB, 2 cores ht)
 
-- git hosting
+- [git hosting](./modules/gogs.nix)
 - [public files](./roles/pub.nix)
 - torrents
 - [quassel](./roles/quassel.nix)
@@ -20,10 +20,10 @@ Physical server. Mostly used for files. (storage: 6 TB hdd + 256GB ssd, RAM: 8GB
 VPS (Storage: 80GB, RAM: 1GB, 2 cores)
 
 - [grafana](./roles/graphs.nix)
-- website
-- email
-- prosody
-- asterisk
+- [website](./roles/website.nix)
+- [email](./roles/main.nix)
+- [prosody](./roles/xmpp.nix)
+- [asterisk](./roles/asterisk.nix)
 
 [woodhouse](https://en.wikipedia.org/wiki/List_of_Archer_characters#Recurring_characters)
 -----------
