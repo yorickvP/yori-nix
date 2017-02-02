@@ -13,7 +13,7 @@ let
 in
 {
   imports = [
-      ./hardware-configuration.nix
+      ../physical/pennyworth.nix
       ../roles/common.nix
       ../roles/collectd.nix
       ../roles/graphs.nix
