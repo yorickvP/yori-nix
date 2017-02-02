@@ -16,8 +16,8 @@
 				linux-nvme = pkgs.fetchFromGitHub {
 					owner = "damige";
 					repo = "linux-nvme";
-					rev = "d6f6df100db9b8f1ee6fc04f8d2f8ddbcbec87f8";
-					sha256 = "0iqxzk3q7vzg7gmqrlvq1lf9wf3qfq5dm79hjsb48s6q12l3ml06";
+					rev = "49204bb12ca0797e17d70f21bb947a99eaeebbfa";
+					sha256 = "1bybrr0j7n81vhf3g36cm8sfmax0kp0b3xndlbcr5im9zrlkvwkj";
 				};
 			in map (name: { patch = "${linux-nvme}/src/${kver}/${name}.patch"; inherit name; })
 			(if kernel_newer_4_9
