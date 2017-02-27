@@ -35,6 +35,7 @@ in
     allow-unfree = true
     binary-caches-parallel-connections = 3
     connect-timeout = 5
+    keep-going = true
   '';
 
   # Networking
