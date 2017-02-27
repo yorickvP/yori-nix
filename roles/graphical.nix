@@ -49,5 +49,6 @@ in
   networking.firewall.allowedUDPPorts = [57621];
 
   users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
+  services.openssh.forwardX11 = true;
 };
 }
