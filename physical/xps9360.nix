@@ -12,8 +12,24 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = ["psmouse"];
-  
+  linux_nvme = {
+      basekpkgs = pkgs.linuxPackages_4_9;
+      gofaster = true;
+      nvmepatch = true;
+  };
 
+  # boot.kernelPackages = pkgs.linuxPackagesFor ((pkgs.linux_testing.override {
+  #   argsOverride = {
+  #     version = "4.11.0-drm";
+  #     modDirVersion = "4.11.0-rc1";
+  #     src = pkgs.fetchgit {
+  #       url = "git://anongit.freedesktop.org/drm-intel";
+  #       rev = "1d1c80ec6d4d6ac72aa80920d5290776f3c81a86";
+  #       sha256 = "1879cgzag8072rp99prhm3nqaf90z63j74p7si931bvz4qj4z7s0";
+  #     };
+  #   };
+  #   }).overrideDerivation (attr: {enableParallelBuilding = true;}));
+  
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -27,7 +43,10 @@
 
   networking.wireless.enable = true;
   hardware.bluetooth.enable = true;
-  boot.kernelParams = ["i915.enable_fbc=1"]; # "i915.enable_psr=1"]; # lvds downclock is no longer a thing
+  # https://wiki.archlinux.org/index.php/Dell_XPS_13_(9360)#Module-based_Powersaving_Options
+  # might require linux 4.11 
+  boot.kernelParams = ["i915.enable_fbc=1" "i915.enable_guc_loading=1" "i915.enable_guc_submission=1" "i915.enable_huc=1" "i915.enable_psr=2"];
+  # now we wait until enable_psr=1 is fixed
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/a751e4ea-f1aa-48e1-9cbe-423878e29b62";

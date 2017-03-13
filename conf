@@ -7,6 +7,10 @@ then
 fi
 export NIX_PATH="ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
 case $1 in
+git)
+	export NIX_PATH="nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
+	eval ${@:3}
+	;;
 stable)
 	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-16.09/nixexprs.tar.xz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
 	eval ${@:3}
