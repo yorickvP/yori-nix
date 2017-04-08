@@ -19,7 +19,7 @@
         interfaces = ["0.0.0.0"];
       };
       environment.systemPackages = [
-        pkgs.kde4.quasselDaemon
+        pkgs.quasselDaemon
       ];
       networking.firewall.allowedTCPPorts = [4242];
     };

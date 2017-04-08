@@ -5,36 +5,21 @@
 	services.asterisk = {
 		enable = true;
 		#extraArguments = ["-vvvddd"];
-		confFiles."asterisk.conf" = ''
-	[directories]
-	astetcdir => /etc/asterisk/
-	astmoddir => ${pkgs.asterisk}/lib/asterisk/modules
-	astvarlibdir => /var/lib/asterisk
-	astdbdir => /var/lib/asterisk
-	astkeydir => /var/lib/asterisk
-	astdatadir => /var/lib/asterisk
-	astagidir => /var/lib/asterisk/agi-bin
-	astspooldir => /var/spool/asterisk
-	astrundir => /var/run/asterisk
-	astlogdir => /var/log/asterisk
-	astsbindir => ${pkgs.asterisk}/sbin
-		'';
-	};
-	environment.etc = {
-	    # Loading all modules by default is considered sensible by the authors of
-	    # "Asterisk: The Definitive Guide". Secure sites will likely want to
-		# specify their own "modules.conf" in the confFiles option.
-		"asterisk/modules.conf".text = ''
-		  [modules]
-		  autoload=yes
-		'';
-
-		# Use syslog for logging so logs can be viewed with journalctl
-		"asterisk/logger.conf".text = ''
+		confFiles."logger.conf" = ''
 		  [general]
 		  [logfiles]
 		  syslog.local0 => notice,warning,error
 		  console => debug,notice,warning,error,verbose,dtmf,fax
+		'';
+		confFiles."extensions.conf" = ''
+			[from-sim]
+			  exten => _X.,1,Verbose(Call from Limesco SIM [''${CALLERID(num)}] to [''${EXTEN}])
+			  same  =>     n,Dial(SIP/speakup01/''${EXTEN})
+
+			[from-speakup]
+			; Vervang ... door de rest van je DIY-nummer:
+			  exten => 31626972516,1,Verbose(Call from SpeakUp [''${CALLERID(num)}] to [''${EXTEN}])
+			  same  =>        n,Dial(SIP/limesco/''${EXTEN})
 		'';
 	};
 	environment.systemPackages = with pkgs; [

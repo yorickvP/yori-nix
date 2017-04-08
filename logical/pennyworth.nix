@@ -7,9 +7,6 @@
 let
   secrets = import <secrets>;
   yoricc = import ../packages/yori-cc.nix;
-  luadbi = pkgs.callPackage ../packages/luadbi.nix {};
-  acmeWebRoot = "/etc/sslcerts/acmeroot";
-  acmeKeyDir = "${config.security.acme.directory}/yori.cc";
 in
 {
   imports = [

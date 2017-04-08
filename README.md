@@ -9,7 +9,7 @@ Systems
 
 Physical server. Mostly used for files. (storage: 6 TB hdd + 256GB ssd, RAM: 8GB, 2 cores ht)
 
-- [git hosting](./modules/gogs.nix)
+- [git hosting](./roles/gogs.nix)
 - [public files](./roles/pub.nix)
 - torrents
 - [quassel](./roles/quassel.nix)

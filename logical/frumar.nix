@@ -10,10 +10,10 @@ in
 {
   imports =
     [ # Include the results of the hardware scan.
-      ../psysical/fractal.nix
+      ../physical/fractal.nix
       ../roles/common.nix
      ../modules/nginx.nix
-      ../modules/gogs.nix # todo: better separation here
+      ../roles/gogs.nix
       ../modules/tor-hidden-service.nix
       ../roles/quassel.nix
       ../roles/pub.nix
@@ -26,7 +26,6 @@ in
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "15.09";
 
-  gogs.domain = "git.yori.cc";
   nginxssl.enable = true;
 
   # hidden SSH service

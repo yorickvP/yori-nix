@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }:
 let secrets = import <secrets>;
+acmeKeyDir = "${config.security.acme.directory}/yori.cc";
 in
 {
   imports = [

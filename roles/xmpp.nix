@@ -2,6 +2,7 @@
 
 let
   luadbi = pkgs.callPackage ../packages/luadbi.nix {};
+  acmeKeyDir = "${config.security.acme.directory}/yori.cc";
 in
 {
   # XMPP
