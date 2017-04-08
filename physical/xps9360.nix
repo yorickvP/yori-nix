@@ -13,7 +13,7 @@
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = ["psmouse"];
   linux_nvme = {
-      basekpkgs = pkgs.linuxPackages_4_9;
+      basekpkgs = pkgs.linuxPackages_testing;
       gofaster = true;
       nvmepatch = true;
   };

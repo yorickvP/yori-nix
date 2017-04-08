@@ -42,6 +42,7 @@ in
       source-code-pro
       ubuntu_font_family  # Ubuntu fonts
       source-han-sans-japanese
+      iosevka
     ];
   };
   # spotify

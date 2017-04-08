@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -17,6 +17,7 @@
 
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.03";
+  networking.enableIPv6 = lib.mkOverride 30 true;
 
 
   services.xserver.displayManager.sessionCommands = ''
