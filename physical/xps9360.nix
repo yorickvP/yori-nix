@@ -42,6 +42,7 @@
   services.thermald.enable = true;
 
   networking.wireless.enable = true;
+  networking.useNetworkd = true;
   hardware.bluetooth.enable = true;
   # https://wiki.archlinux.org/index.php/Dell_XPS_13_(9360)#Module-based_Powersaving_Options
   # might require linux 4.11 
