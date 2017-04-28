@@ -46,8 +46,8 @@ in
                "uid=1000"
                "reconnect" "IdentityFile=/root/.ssh/id_sshfs"];
   };
-  fileSystems."/mnt/alphonse" = {
-    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@quassel.rasusan.nl:/mnt/storinator";
+  fileSystems."/mnt/oxygen" = {
+    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@oxygen.obfusk.ch:";
     fsType = "fuse";
     options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
                "defaults" "allow_other" "transform_symlinks" "default_permissions"
