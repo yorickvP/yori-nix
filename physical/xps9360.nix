@@ -5,31 +5,16 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      ../modules/linux-nvme.nix
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = ["psmouse"];
-  linux_nvme = {
-      basekpkgs = pkgs.linuxPackages_testing;
-      gofaster = true;
-      nvmepatch = true;
-  };
 
-  # boot.kernelPackages = pkgs.linuxPackagesFor ((pkgs.linux_testing.override {
-  #   argsOverride = {
-  #     version = "4.11.0-drm";
-  #     modDirVersion = "4.11.0-rc1";
-  #     src = pkgs.fetchgit {
-  #       url = "git://anongit.freedesktop.org/drm-intel";
-  #       rev = "1d1c80ec6d4d6ac72aa80920d5290776f3c81a86";
-  #       sha256 = "1879cgzag8072rp99prhm3nqaf90z63j74p7si931bvz4qj4z7s0";
-  #     };
-  #   };
-  #   }).overrideDerivation (attr: {enableParallelBuilding = true;}));
-  
+  boot.kernelPackages = pkgs.linuxPackages_4_11;
+
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
