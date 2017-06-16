@@ -52,8 +52,18 @@ in
     options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
                "defaults" "allow_other" "transform_symlinks" "default_permissions"
                "uid=1000"
-               "reconnect" "IdentityFile=/root/.ssh/id_sshfs" "port=15777"];
+               "reconnect" "IdentityFile=/root/.ssh/id_sshfs"];
   };
+
+  fileSystems."/mnt/nyamsas" = {
+    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@nyamsas.quezacotl.nl:";
+    fsType = "fuse";
+    options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
+               "defaults" "allow_other" "transform_symlinks" "default_permissions"
+               "uid=1000"
+               "reconnect" "IdentityFile=/root/.ssh/id_sshfs" "port=1337"];
+  };
+
 
   networking.firewall.allowedTCPPorts = [7 8080 9090 9777]; # kodi
 
