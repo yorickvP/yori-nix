@@ -33,6 +33,12 @@ in
           Password "${secrets.influx_pass.${config.networking.hostName}}"
         </Server>
       </Plugin>
+      <Plugin "df">
+        FSType "btrfs"
+        FSType "ext3"
+        FSType "ext4"
+        FSType "vfat"
+      </Plugin>
     '';
   };
   boot.kernel.sysctl."net.core.rmem_max" = 26214400;
