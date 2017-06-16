@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 let
   gitHome = "/var/gogs";
-  gogs = pkgs.callPackage ../packages/gogs.nix { };
   gogsPort = 8001;
   domain = "git.yori.cc";
 in
