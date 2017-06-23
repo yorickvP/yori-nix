@@ -12,6 +12,7 @@ sslcfg = dir: ''
 makeChallenges = servername: key_webroot: ''
 	server {
 		listen 80;
+		listen [::]:80;
 		server_name ${servername};
 		location /.well-known/acme-challenge {
 			default_type text/plain;
@@ -22,6 +23,7 @@ makeChallenges = servername: key_webroot: ''
 makeServerBlock = servername: {key_root, key_webroot, contents, ...}: ''
 	server {
 		listen 80;
+		listen [::]:80;
 		server_name ${servername};
 		server_tokens off;
 		location /.well-known/acme-challenge {
@@ -34,7 +36,12 @@ makeServerBlock = servername: {key_root, key_webroot, contents, ...}: ''
 	}
 	server {
 		listen       443;
+		listen       [::]:443;
 		server_name  ${servername};
+		location /.well-known/acme-challenge {
+			default_type text/plain;
+			alias ${key_webroot}/.well-known/acme-challenge;
+		}
 		${sslcfg key_root}
 		${contents}
 	}
