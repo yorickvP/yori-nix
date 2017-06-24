@@ -33,8 +33,8 @@ in
   nix.extraOptions = ''
     allow-unsafe-native-code-during-evaluation = true
     allow-unfree = true
-    binary-caches-parallel-connections = 3
-    connect-timeout = 5
+    #binary-caches-parallel-connections = 3
+    #connect-timeout = 5
     keep-going = true
   '';
 
@@ -55,7 +55,12 @@ in
   programs.ssh.extraConfig = ''
     Host *.onion
       ProxyCommand nc -xlocalhost:9050 -X5 %h %p
-  '';
+  '' +
+  (with lib; (flip concatMapStrings) (filter (hasPrefix "ssh.") (attrNames secrets.tor_hostnames)) (name: ''
+    Host ${removePrefix "ssh." name}.onion
+        hostname ${secrets.tor_hostnames.${name}}
+    ''
+    ));
 
   environment.systemPackages = with pkgs; [
     # v important.
@@ -100,6 +105,5 @@ in
   nix.gc.automatic = true;
 
   security.acme.preliminarySelfsigned = true;
-
 }
 
