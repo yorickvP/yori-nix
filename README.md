@@ -21,7 +21,7 @@ VPS (Storage: 80GB, RAM: 1GB, 2 cores)
 
 - [grafana](./roles/graphs.nix)
 - [website](./roles/website.nix)
-- [email](./roles/main.nix)
+- [email](./roles/mail.nix)
 - [prosody](./roles/xmpp.nix)
 - [asterisk](./roles/asterisk.nix)
 
