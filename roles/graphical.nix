@@ -18,6 +18,7 @@ in
       tappingDragLock = false;
     };
     layout = "us";
+    xkbOptions = "caps:escape";
     displayManager.slim.defaultUser = "yorick";
     # xkbOptions = "eurosign:e";
     windowManager.i3 = {

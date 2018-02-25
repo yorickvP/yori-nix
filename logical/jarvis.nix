@@ -16,8 +16,8 @@
 
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.03";
-  networking.enableIPv6 = lib.mkOverride 30 true;
+  system.stateVersion = "17.09";
+  #networking.enableIPv6 = lib.mkOverride 30 true;
 
 
   services.xserver.displayManager.sessionCommands = ''

@@ -67,6 +67,7 @@ in
     cowsay ponysay
     ed # ed, man!
     sl
+    rlwrap
 
     vim
 

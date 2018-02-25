@@ -12,7 +12,7 @@
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = ["psmouse"];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_11;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
 
   # Use the systemd-boot EFI boot loader.
@@ -33,7 +33,7 @@
   hardware.bluetooth.enable = true;
   # https://wiki.archlinux.org/index.php/Dell_XPS_13_(9360)#Module-based_Powersaving_Options
   # might require linux 4.11 
-  boot.kernelParams = ["i915.enable_fbc=1" "i915.enable_guc_loading=1" "i915.enable_guc_submission=1" "i915.enable_huc=1" "i915.enable_psr=2"];
+  boot.kernelParams = ["i915.enable_fbc=1" "i915.enable_guc_loading=1" "i915.enable_guc_submission=1" "i915.enable_huc=1" "i915.enable_psr=2" "intel_iommu=on"];
   # now we wait until enable_psr=1 is fixed
 
   fileSystems."/" =
