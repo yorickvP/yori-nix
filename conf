@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 if ! [ -e deploy_key ] || ! [ -e secrets.nix ]
 then
-	gpg --decrypt-files secrets.nix.asc deploy_key.asc keys/*.asc
+  git crypt unlock
 	sudo chgrp nixbld deploy_key
 	chmod 640 deploy_key
 fi
@@ -23,6 +23,4 @@ channel)
 	export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
 	eval ${@:3}
 	;;
-update-encrypt)
-	gpg -a -r yorick --encrypt-files secrets.nix deploy_key keys/*.key
 esac
