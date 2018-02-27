@@ -2,7 +2,10 @@ let secrets = import <secrets>;
 in
 { config, pkgs, lib, ...}:
 {
-	imports = [];
+	imports = [
+    ../roles/hardware.nix
+    ../modules/tor-hidden-service.nix
+  ];
 	time.timeZone = "Europe/Amsterdam";
 	users.mutableUsers = false;
 	users.extraUsers.root = {
@@ -12,6 +15,7 @@ in
 
 	};
   services.timesyncd.enable = true;
+  services.fail2ban.enable = true;
 	users.extraUsers.yorick = {
 	  isNormalUser = true;
 	  uid = 1000;
@@ -22,6 +26,7 @@ in
 
   # Nix
   nixpkgs.config.allowUnfree = true;
+  nix.package = pkgs.nixUnstable;
 
 
   nix.trustedBinaryCaches = config.nix.binaryCaches ++ [http://hydra.cryp.to];
@@ -32,10 +37,6 @@ in
 
   nix.extraOptions = ''
     allow-unsafe-native-code-during-evaluation = true
-    allow-unfree = true
-    #binary-caches-parallel-connections = 3
-    #connect-timeout = 5
-    keep-going = true
   '';
 
   # Networking

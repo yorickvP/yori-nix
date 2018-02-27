@@ -15,6 +15,10 @@ stable)
 	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-17.03/nixexprs.tar.xz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
 	eval ${@:3}
 	;;
+checkout)
+    export NIX_PATH="nixpkgs=`pwd`/../nixpkgs:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
+    eval ${@:3}
+    ;;
 channel)
 	export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
 	eval ${@:3}

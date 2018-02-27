@@ -13,15 +13,9 @@ in
     SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${powersw}"
   '';
 
-  systemd.services.powerswitch = {
-    enable = true;
-    wantedBy = [ "multi-user.target" "suspend.target" ];
-    after = [ "suspend.target" "display-manager.service" ];
-    description = "Run powerswitch sometimes";
-    preStart = "sleep 4s";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = powersw;
-    };
-  };
+  powerManagement.powerUpCommands = ''
+    sleep 4s
+    ${powersw}/bin/powerswitch
+  '';
+  
 }

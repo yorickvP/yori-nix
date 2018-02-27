@@ -1,47 +1,27 @@
-# I'm modifying this file anyways.
 { config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-      ./hp8570w/powerdown.nix
-    ];
+  imports = [
+    <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+    ./hp8570w/powerdown.nix
+  ];
 
-  hardware.cpu.intel.updateMicrocode = true;
+  yorick = { cpu = "intel"; gpu = "nvidia"; laptop = true; };
 
   boot = {
     loader.grub = {
       enable = true;
       device = "/dev/sda";
-      trustedBoot = {
-        enable = true;
-        systemHasTPM = "YES_TPM_is_activated";
-      };
     };
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = ["nvidiabl" "kvm-intel"];
   };
-  services.xserver.videoDrivers = ["nouveau"];
-  services.xserver.synaptics.enable = true;
 
-  networking.wireless.enable = true;
-  hardware.bluetooth.enable = true;
-
-
-  # ideal... doesn't work.
-  #services.udev.extraRules = ''
-  #   KERNEL=="nvidia_backlight", SUBSYSTEM=="backlight", MODE="666"
-  #'';
-  # for now
-  systemd.services."display-manager".preStart = ''
-   chmod a+w $(realpath /sys/class/backlight/nv_backlight/brightness) || true
-  '';
   # this makes sure my wifi doesn't take a minute to work
   services.udev.extraRules = ''
     SUBSYSTEM=="firmware", ACTION=="add", ATTR{loading}="-1"
   '';
 
-  boot.initrd.availableKernelModules = [ "xhci_hcd" "ehci_pci" "ahci" "usbhid" "usb_storage" "btrfs" "dm_crypt" ];
+  boot.initrd.availableKernelModules = [ "xhci_hcd" "ehci_pci" "ahci" "usbhid" "usb_storage" ];
   boot.initrd.luks.devices = [ {
     name = "nix-root-enc";
     device = "/dev/sdb2";
@@ -65,6 +45,6 @@
 
   nix.maxJobs = 8;
 
-  services.tcsd.enable = true; # it has a TPM. maybe use this?
-  environment.systemPackages = with pkgs; [btrfs-progs tpm-tools];
+  #services.tcsd.enable = true; # it has a TPM. maybe use this?
+  #environment.systemPackages = with pkgs; [tpm-tools];
 }

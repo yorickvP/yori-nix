@@ -1,6 +1,4 @@
 { config, pkgs, lib, ... }:
-let secrets = import <secrets>;
-in
 {
   #imports = [../modules/nginx.nix];
   config = {

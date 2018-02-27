@@ -1,25 +1,30 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, lib, ... }:
 let
   secrets = import <secrets>;
+mkFuseMount = device: opts: {
+    # todo:  "ServerAliveCountMax=3" "ServerAliveInterval=30"
+
+    device = "${pkgs.sshfsFuse}/bin/sshfs#${device}";
+    fsType = "fuse";
+    options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
+               "defaults" "allow_other" "transform_symlinks" "default_permissions"
+               "uid=1000"
+               "reconnect" "IdentityFile=/root/.ssh/id_sshfs"] ++ opts;
+};
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ../physical/nuc.nix
       ../roles/common.nix
-      ../roles/collectd.nix
-      ../modules/tor-hidden-service.nix
+      # ../roles/collectd.nix
       ../roles/graphical.nix
     ];
 
   networking.hostName = secrets.hostnames.woodhouse;
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "16.09";
+  system.stateVersion = "17.09";
 
 
   services.xserver = {
@@ -27,42 +32,14 @@ in
   };
 
 
-
-  services.tor.hiddenServices = [
-    { name = "ssh";
-      port = 22;
-      hostname = secrets.tor_hostnames."ssh.woodhouse";
-      private_key = "/run/keys/torkeys/ssh.woodhouse.key"; }
-  ];
+  services.tor.hiddenServices.ssh.map = [ {port = 22;} ];
+  services.tor.service-keys.ssh = "/run/keys/torkeys/ssh.woodhouse.key";
 
   system.fsPackages = [ pkgs.sshfsFuse ];
-  fileSystems."/mnt/frumar" = {
-    # todo:  "ServerAliveCountMax=3" "ServerAliveInterval=30"
 
-    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@" + secrets.hostnames.frumar + ":/data/yorick";
-    fsType = "fuse";
-    options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
-               "defaults" "allow_other" "transform_symlinks" "default_permissions"
-               "uid=1000"
-               "reconnect" "IdentityFile=/root/.ssh/id_sshfs"];
-  };
-  fileSystems."/mnt/oxygen" = {
-    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@oxygen.obfusk.ch:";
-    fsType = "fuse";
-    options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
-               "defaults" "allow_other" "transform_symlinks" "default_permissions"
-               "uid=1000"
-               "reconnect" "IdentityFile=/root/.ssh/id_sshfs"];
-  };
-
-  fileSystems."/mnt/nyamsas" = {
-    device = "${pkgs.sshfsFuse}/bin/sshfs#yorick@nyamsas.quezacotl.nl:";
-    fsType = "fuse";
-    options = ["noauto" "x-systemd.automount" "_netdev" "users" "idmap=user"
-               "defaults" "allow_other" "transform_symlinks" "default_permissions"
-               "uid=1000"
-               "reconnect" "IdentityFile=/root/.ssh/id_sshfs" "port=1337"];
-  };
+  fileSystems."/mnt/frumar" = mkFuseMount "yorick@${secrets.hostnames.frumar}:/data/yorick" [];
+  fileSystems."/mnt/oxygen" = mkFuseMount "yorick@oxygen.obfusk.ch:" [];
+  fileSystems."/mnt/nyamsas" = mkFuseMount "yorick@nyamsas.quezacotl.nl:" ["port=1337"];
 
 
   networking.firewall.allowedTCPPorts = [7 8080 9090 9777]; # kodi

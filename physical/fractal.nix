@@ -9,8 +9,7 @@
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "sd_mod" ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  yorick.cpu = "intel";
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;

@@ -56,11 +56,11 @@ in
       libxml2 = null;
       libtool = null;
       lvm2 = null;
-      libmysql = null;
+      mysql = null;
       protobufc = null;
       python = null;
       rabbitmq-c = null;
-      riemann = null;
+      riemann_c_client = null;
       rrdtool = null;
       varnish = null;
       yajl = null;

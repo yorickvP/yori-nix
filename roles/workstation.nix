@@ -25,4 +25,5 @@
   '';
   virtualisation.virtualbox.host.enable = true;
   yorick.support32bit = true;
+  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
 }

@@ -8,11 +8,6 @@ in
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
-    synaptics = {
-      twoFingerScroll = true;
-      horizontalScroll = true;
-      scrollDelta = -107; # inverted scrolling
-    };
     libinput = {
       naturalScrolling = true;
       tappingDragLock = false;
@@ -23,16 +18,24 @@ in
     # xkbOptions = "eurosign:e";
     windowManager.i3 = {
       enable = true;
-    } // (if (lib.versionAtLeast config.system.nixosRelease "17.03") then {
       package = pkgs.i3-gaps;
-      } else {});
+    };
   };
-  hardware.opengl = {
-    enable = true;
-    driSupport32Bit = config.yorick.support32bit;
-  };
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.support32Bit = config.yorick.support32bit;
+    hardware.opengl = {
+      enable = true;
+      driSupport32Bit = config.yorick.support32bit;
+    };
+    sound.enable = true;
+    hardware.pulseaudio = {
+      enable = true;
+      support32Bit = config.yorick.support32bit;
+    };
+  users.extraUsers.yorick.extraGroups = ["video"];
+    # fix backlight permissions
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
+    ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
+  '';
 
   fonts = {
     enableFontDir = true;
@@ -47,8 +50,8 @@ in
     ];
   };
   # spotify
-  networking.firewall.allowedTCPPorts = [57621];
-  networking.firewall.allowedUDPPorts = [57621];
+  networking.firewall.allowedTCPPorts = [55025 57621];
+  networking.firewall.allowedUDPPorts = [55025 57621];
 
   users.extraUsers.yorick.hashedPassword = secrets.yorick_hashedPassword;
   services.openssh.forwardX11 = true;
