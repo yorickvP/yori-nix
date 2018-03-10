@@ -26,4 +26,8 @@
   virtualisation.virtualbox.host.enable = true;
   yorick.support32bit = true;
   nix.gc.automatic = pkgs.lib.mkOverride 30 false;
+  # yubikey
+  hardware.u2f.enable = true;
+  services.pcscd.enable = true;
+  environment.systemPackages = [pkgs.yubikey-manager];
 }
