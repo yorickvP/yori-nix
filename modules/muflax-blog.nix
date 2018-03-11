@@ -1,15 +1,18 @@
-{ pkgs, config, lib, ... }:
+{ cur_pkgs, config, lib, ... }:
 
 
 let
   cfg = config.services.muflax-blog;
-  muflax-source = pkgs.fetchFromGitHub {
+  muflax-source = builtins.fetchGit {
     rev = "e5ce7ae4296c6605a7e886c153d569fc38318096";
-    owner = "fmap";
-    repo = "muflax65ngodyewp.onion";
-    sha256 = "10n5km8mr7vjqlyb46drfhwzlrwranqaxpqc53a2hk9pqqckm8cx";
-  };
-  blog = lib.overrideDerivation (pkgs.callPackage "${muflax-source}/maintenance" {}) (default: {
+    ref = "HEAD";
+    url = "https://github.com/fmap/muflax65ngodyewp.onion.git";
+};
+nixpkgs = import (builtins.fetchTarball {
+  url = "https://github.com/NixOS/nixpkgs-channels/archive/78e9665b48ff45d3e29f45b3ebeb6fc6c6e19922.tar.gz";
+  sha256 = "09f50jaijvry9lrnx891qmcf92yb8qs64n1cvy0db2yjrmxsxyw8";
+}) { system = builtins.currentSystem; };
+  blog = lib.overrideDerivation (nixpkgs.callPackage "${muflax-source}/maintenance" {}) (default: {
     buildPhase = default.buildPhase + "\n" + ''
       grep -lr '[^@]muflax.com' out | xargs -r sed -i 's/\([^@]\)muflax.com/\1${cfg.hidden-service.hostname}/g'
     '';
@@ -46,11 +49,8 @@ in with lib; {
         }
       '') ["daily" "gospel" "blog"]);
     };
-    services.tor.hiddenServices = [{
-      name = "muflax-blog";
-      remote_port = 80;
-      inherit (cfg.web-server) port;
-      inherit (cfg.hidden-service) hostname private_key;
-    }];
+    services.tor.hiddenServices.muflax-blog.map = [{
+      port = 80; toPort = cfg.web-server.port; }];
+    services.tor.service-keys.muflax-blog = cfg.hidden-service.private_key;
   };
 }

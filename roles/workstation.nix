@@ -17,7 +17,7 @@
     enable = true;
     drivers = [ pkgs.gutenprint ];
   };
-  environment.systemPackages = [pkgs.ghostscript];
+  environment.systemPackages = [pkgs.ghostscript pkgs.yubikey-manager];
   services.xserver.displayManager.sessionCommands = ''
     gpg-connect-agent /bye
     unset SSH_AGENT_PID
@@ -29,5 +29,5 @@
   # yubikey
   hardware.u2f.enable = true;
   services.pcscd.enable = true;
-  environment.systemPackages = [pkgs.yubikey-manager];
+  #environment.systemPackages = [pkgs.yubikey-manager];
 }

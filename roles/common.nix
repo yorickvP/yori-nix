@@ -1,10 +1,20 @@
 let secrets = import <secrets>;
 in
 { config, pkgs, lib, ...}:
+let
+  machine = with lib; head (splitString "." config.networking.hostName);
+in
 {
 	imports = [
     ../roles/hardware.nix
     ../modules/tor-hidden-service.nix
+    ../modules/nginx.nix
+    ../roles/pub.nix
+    ../roles/quassel.nix
+    ../roles/gogs.nix
+    ../roles/mail.nix
+    ../roles/website.nix
+    ../roles/xmpp.nix
   ];
 	time.timeZone = "Europe/Amsterdam";
 	users.mutableUsers = false;
@@ -28,11 +38,6 @@ in
   nixpkgs.config.allowUnfree = true;
   nix.package = pkgs.nixUnstable;
 
-
-  nix.trustedBinaryCaches = config.nix.binaryCaches ++ [http://hydra.cryp.to];
-  nix.binaryCachePublicKeys = [
-    "hydra.cryp.to-1:8g6Hxvnp/O//5Q1bjjMTd5RO8ztTsG8DKPOAg9ANr2g="
-  ];
   nix.buildCores = config.nix.maxJobs;
 
   nix.extraOptions = ''
@@ -51,6 +56,9 @@ in
   services.tor = {
     enable = true;
     client.enable = true;
+    # ssh hidden service
+    hiddenServices.ssh.map = [{ port = 22; }];
+    service-keys.ssh = "/run/keys/torkeys/ssh.${machine}.key";
   };
 
   programs.ssh.extraConfig = ''
@@ -106,6 +114,5 @@ in
   ];
   nix.gc.automatic = true;
 
-  security.acme.preliminarySelfsigned = true;
 }
 

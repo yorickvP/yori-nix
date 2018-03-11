@@ -26,15 +26,6 @@ in
   # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.09";
 
-
-  services.xserver = {
-  	# displayManager.slim.autoLogin = true; # TODO: debug this
-  };
-
-
-  services.tor.hiddenServices.ssh.map = [ {port = 22;} ];
-  services.tor.service-keys.ssh = "/run/keys/torkeys/ssh.woodhouse.key";
-
   system.fsPackages = [ pkgs.sshfsFuse ];
 
   fileSystems."/mnt/frumar" = mkFuseMount "yorick@${secrets.hostnames.frumar}:/data/yorick" [];

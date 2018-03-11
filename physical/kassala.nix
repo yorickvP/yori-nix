@@ -30,7 +30,7 @@ in
     usePredictableInterfaceNames = false; # only eth0
     interfaces.eth0 = {
       useDHCP = false;
-      inherit (ipconf) ip4 ip6;
+      inherit (ipconf) ipv4 ipv6;
     };
     inherit (ipconf) nameservers;
     # ideally, it should add a route for this automatically

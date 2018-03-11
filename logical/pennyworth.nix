@@ -12,14 +12,7 @@ in
   imports = [
       ../physical/kassala.nix
       ../roles/common.nix
-      ../roles/collectd.nix
-      ../roles/graphs.nix
-      ../roles/xmpp.nix
-      ../roles/website.nix
-      ../roles/mail.nix
-      ../modules/tor-hidden-service.nix
       ../modules/muflax-blog.nix
-      ../roles/asterisk.nix
   ];
 
   networking.hostName = secrets.hostnames.pennyworth;
@@ -31,25 +24,34 @@ in
   networking.enableIPv6 = lib.mkOverride 30 true;
 
   system.stateVersion = "16.03";
+  yorick = { cpu = null; };
   
-  nginxssl.enable = true;
-
-  services.nginx.virtualHosts."pad.yori.cc" = {
-    enableACME = true;
-    forceSSL = true;
-    locations."/" = {
-      proxyPass = "http://127.0.0.1:9140";
+  services.nginx.enable = true;
+  services.yorick = {
+    website = { enable = true; vhost = "yorickvanpelt.nl"; };
+    mail = {
+      enable = true;
+      mainUser = "yorick";
+      users = {
+        yorick = with secrets; {
+          password = yorick_mailPassword;
+          domains = email_domains;
+        };
+      };
+    };
+    xmpp = {
+      enable = true;
+      vhost = "yori.cc";
+      admins = [ "yorick@yori.cc" ];
     };
   };
+  services.nginx.virtualHosts."yori.cc" = {
+    enableACME = true;
+    forceSSL = true;
+    globalRedirect = "yorickvanpelt.nl";
+  };
 
-  # hidden SSH service
 
-  services.tor.hiddenServices = [
-    { name = "ssh";
-      port = 22;
-      hostname = secrets.tor_hostnames."ssh.pennyworth";
-      private_key = "/run/keys/torkeys/ssh.pennyworth.key"; }
-  ];
 
 
   services.muflax-blog = {

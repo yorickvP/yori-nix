@@ -1,4 +1,4 @@
-with import <nixpkgs> {};
+{ stdenv, callPackage }:
 
 let gogitget = callPackage ./gogitget.nix {}; in
 

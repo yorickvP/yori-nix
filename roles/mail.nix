@@ -1,25 +1,27 @@
 { config, pkgs, lib, ... }:
-let secrets = import <secrets>;
-acmeKeyDir = "${config.security.acme.directory}/yori.cc";
+let
+cfg = config.services.yorick.mail;
 in
 {
   imports = [
     ../modules/mailz.nix
     ../modules/backup.nix
   ];
-  config = {
+  options.services.yorick.mail = with lib; {
+    enable = mkEnableOption "mail service";
+    mainUser = mkOption { type = types.string; };
+    users = mkOption {};
+  };
+  config = lib.mkIf cfg.enable {
     # email
-    services.mailz = {
+    services.mailz = rec {
       domain = config.networking.hostName;
-      keydir = acmeKeyDir;
-      mainUser = "yorick";
-      users = {
-        yorick = with secrets; {
-          password = yorick_mailPassword;
-          domains = email_domains;
-        };
-      };
+      keydir = "${config.security.acme.directory}/${domain}";
+      inherit (cfg) mainUser users;
     };
+    security.acme.certs.${config.networking.hostName}.postRun = ''
+      systemctl reload dovecot2.service postfix.service
+    '';
     services.backup = {
       enable = true;
       backups = {
