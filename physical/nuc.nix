@@ -6,10 +6,11 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+    <yori-nix/physical>
     ];
 
   boot.initrd.availableKernelModules = [ "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-  yorick = { cpu = "intel"; gpu = "intel"; };
+  hardware.yorick = { cpu = "intel"; gpu = "intel"; };
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

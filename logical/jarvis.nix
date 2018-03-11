@@ -2,16 +2,11 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
-      ../physical/xps9360.nix
-      ../roles/common.nix
-      ../roles/workstation.nix
+    [ <yori-nix/physical/xps9360.nix>
+      <yori-nix/roles/workstation.nix>
     ];
 
-  networking.hostName = "jarvis"; # Define your hostname.
 
-
-  # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.09";
   #networking.enableIPv6 = lib.mkOverride 30 true;
 

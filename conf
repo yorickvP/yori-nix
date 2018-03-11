@@ -5,7 +5,7 @@ then
 	sudo chgrp nixbld deploy_key
 	chmod 640 deploy_key
 fi
-export NIX_PATH="ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix
+export NIX_PATH="ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix:yori-nix=`pwd`
 case $1 in
 git)
 	export NIX_PATH="nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"

@@ -3,10 +3,11 @@
 {
   imports = [
     <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+    <yori-nix/physical>
     ./hp8570w/powerdown.nix
   ];
 
-  yorick = { cpu = "intel"; gpu = "nvidia"; laptop = true; };
+  hardware.yorick = { cpu = "intel"; gpu = "nvidia"; laptop = true; };
 
   boot = {
     loader.grub = {

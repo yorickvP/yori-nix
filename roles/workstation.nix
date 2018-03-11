@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 {
   imports = [
-    ../roles/graphical.nix
+    <yori-nix/roles/graphical.nix>
   ];
   users.extraUsers.yorick.extraGroups = ["input"];
   services.redshift = {

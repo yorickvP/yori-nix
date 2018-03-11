@@ -6,10 +6,11 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
+      <yori-nix/physical>
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "sd_mod" ];
-  yorick.cpu = "intel";
+  hardware.yorick.cpu = "intel";
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;

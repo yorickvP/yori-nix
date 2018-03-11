@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
-let cfg = config.yorick; in
+let cfg = config.hardware.yorick; in
 with lib;
 {
-  options.yorick = {
+  options.hardware.yorick = {
     cpu = mkOption {
-      type = types.nullOr (types.enum ["intel"]);
+      type = types.nullOr (types.enum ["intel" "virtual"]);
     };
     gpu = mkOption {
       type = types.nullOr (types.enum ["intel" "nvidia"]);

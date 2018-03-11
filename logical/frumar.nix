@@ -1,16 +1,11 @@
 { config, pkgs, ... }:
-let secrets = import <secrets>;
-in
 {
   imports = [ 
-    ../physical/fractal.nix
-    ../roles/common.nix
+    <yori-nix/physical/fractal.nix>
+    <yori-nix/roles/server.nix>
   ];
 
 
-  networking.hostName = secrets.hostnames.frumar;
-
-  # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "15.09";
 
   services.nginx.enable = true;

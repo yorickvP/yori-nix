@@ -3,7 +3,7 @@ let
   ipconf = (import <secrets>).ipconf.${config.networking.hostName};
 in
 {
-  imports = [ ../modules/nixos-in-place.nix ];
+  imports = [ ../modules/nixos-in-place.nix <yori-nix/physical> ];
   "nixos-in-place" = {
     enable = true;
     rootfs = "/dev/disk/by-uuid/7165e542-0995-474c-a228-9592339e0604";
@@ -44,4 +44,5 @@ in
     ip -6 route add default via ${gateway6} || true
   '';
   nix.maxJobs = lib.mkDefault 2;
+  hardware.yorick.cpu = "virtual";
 }

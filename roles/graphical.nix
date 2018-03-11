@@ -2,6 +2,7 @@ let secrets = import <secrets>;
 in
 { config, lib, pkgs, ... }:
 {
+  imports = [ <yori-nix/roles> ];
   options.yorick.support32bit = with lib;
     mkOption { type = types.bool; default = false; };
   config = {

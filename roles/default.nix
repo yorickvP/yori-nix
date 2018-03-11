@@ -2,20 +2,15 @@ let secrets = import <secrets>;
 in
 { config, pkgs, lib, ...}:
 let
-  machine = with lib; head (splitString "." config.networking.hostName);
+  machine = lib.removeSuffix ".nix" (builtins.baseNameOf <nixos-config>);
 in
 {
 	imports = [
-    ../roles/hardware.nix
     ../modules/tor-hidden-service.nix
     ../modules/nginx.nix
-    ../roles/pub.nix
-    ../roles/quassel.nix
-    ../roles/gogs.nix
-    ../roles/mail.nix
-    ../roles/website.nix
-    ../roles/xmpp.nix
+    <yori-nix/services>
   ];
+  networking.hostName = secrets.hostnames.${machine};
 	time.timeZone = "Europe/Amsterdam";
 	users.mutableUsers = false;
 	users.extraUsers.root = {

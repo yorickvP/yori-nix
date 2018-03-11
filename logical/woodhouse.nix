@@ -13,26 +13,21 @@ mkFuseMount = device: opts: {
 };
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ../physical/nuc.nix
-      ../roles/common.nix
-      # ../roles/collectd.nix
-      ../roles/graphical.nix
-    ];
+  imports = [
+    <yori-nix/physical/nuc.nix>
+    <yori-nix/roles/graphical.nix>
+  ];
 
-  networking.hostName = secrets.hostnames.woodhouse;
-
-  # The NixOS release to be compatible with for stateful data such as databases.
   system.stateVersion = "17.09";
 
+  # fuse mounts
   system.fsPackages = [ pkgs.sshfsFuse ];
 
   fileSystems."/mnt/frumar" = mkFuseMount "yorick@${secrets.hostnames.frumar}:/data/yorick" [];
   fileSystems."/mnt/oxygen" = mkFuseMount "yorick@oxygen.obfusk.ch:" [];
   fileSystems."/mnt/nyamsas" = mkFuseMount "yorick@nyamsas.quezacotl.nl:" ["port=1337"];
 
-
-  networking.firewall.allowedTCPPorts = [7 8080 9090 9777]; # kodi
+  # kodi ports
+  networking.firewall.allowedTCPPorts = [7 8080 9090 9777];
 
 }

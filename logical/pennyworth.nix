@@ -4,27 +4,16 @@
 
 { config, pkgs, lib, ... }:
 
-let
-  secrets = import <secrets>;
-  yoricc = import ../packages/yori-cc.nix;
-in
 {
   imports = [
-      ../physical/kassala.nix
-      ../roles/common.nix
-      ../modules/muflax-blog.nix
+    <yori-nix/physical/kassala.nix>
+    <yori-nix/roles/server.nix>
+    ../modules/muflax-blog.nix
   ];
-
-  networking.hostName = secrets.hostnames.pennyworth;
-
-  services.nixosManual.enable = false;
-
-  environment.noXlibs = true;
 
   networking.enableIPv6 = lib.mkOverride 30 true;
 
   system.stateVersion = "16.03";
-  yorick = { cpu = null; };
   
   services.nginx.enable = true;
   services.yorick = {
@@ -32,11 +21,9 @@ in
     mail = {
       enable = true;
       mainUser = "yorick";
-      users = {
-        yorick = with secrets; {
-          password = yorick_mailPassword;
-          domains = email_domains;
-        };
+      users.yorick = {
+        password = (import <yori-nix/secrets.nix>).yorick_mailPassword;
+        domains = ["yori.cc" "yorickvanpelt.nl"];
       };
     };
     xmpp = {
