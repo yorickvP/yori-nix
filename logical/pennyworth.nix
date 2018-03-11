@@ -48,7 +48,8 @@
     };
     hidden-service = {
       hostname = "muflax65ngodyewp.onion";
-      private_key = "/run/keys/torkeys/http.muflax.key";
+      private_key = "/root/keys/http.muflax.key";
     };
   };
+  deployment.keyys = [ <yori-nix/keys/http.muflax.key> ];
 }

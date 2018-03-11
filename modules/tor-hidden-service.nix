@@ -15,7 +15,7 @@ in {
     systemd.services."install-tor-hidden-service-keys" = {
       wantedBy = ["tor.service"];
       serviceConfig.Type = "oneshot";
-      serviceConfig.User = "tor";
+      serviceConfig.User = "root";
       serviceConfig.Group = "keys";
       # TODO: update on change?
       # TODO: better ways to get the keys on the server
@@ -24,6 +24,7 @@ in {
           mkdir -p ${torDir}/onion/${name}/
           cp ${keypath} ${torDir}/onion/${name}/private_key
           chmod -R 700 ${torDir}/onion/${name}
+          chown -R tor ${torDir}/onion/${name}
         fi
       '') service-keys);
     };

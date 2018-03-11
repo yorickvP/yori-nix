@@ -13,6 +13,8 @@ in
   # before: /nixos/nix/* /boot/grub/menu.lst
   # after:  /nix/* /old-root/boot/grub/menu.lst
   boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    blacklistedKernelModules = ["coretemp"];
     # use grub 1, don't install
     loader.grub = {
       version = 1;

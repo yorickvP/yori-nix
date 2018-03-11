@@ -6,5 +6,5 @@
     ./quassel.nix
     ./website.nix
     ./xmpp.nix
-  ]
+  ];
 }

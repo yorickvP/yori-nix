@@ -2,16 +2,19 @@ let secrets = import <secrets>;
 in
 { config, pkgs, lib, ...}:
 let
-  machine = lib.removeSuffix ".nix" (builtins.baseNameOf <nixos-config>);
+  machine = with lib; head (splitString "." config.networking.hostName);
 in
 {
 	imports = [
     ../modules/tor-hidden-service.nix
     ../modules/nginx.nix
-    <yori-nix/deploy/keys.nix>
-    <yori-nix/services>
+    ../roles/pub.nix
+    ../roles/quassel.nix
+    ../roles/gogs.nix
+    ../roles/mail.nix
+    ../roles/website.nix
+    ../roles/xmpp.nix
   ];
-  networking.hostName = secrets.hostnames.${machine};
 	time.timeZone = "Europe/Amsterdam";
 	users.mutableUsers = false;
 	users.extraUsers.root = {
@@ -22,14 +25,6 @@ in
 	};
   services.timesyncd.enable = true;
   services.fail2ban.enable = true;
-  # ban repeat offenders longer
-  services.fail2ban.jails.recidive = ''
-    filter = recidive
-    action = iptables-allports[name=recidive]
-    maxretry = 5
-    bantime = 604800 ; 1 week
-    findtime = 86400 ; 1 day
-  '';
 	users.extraUsers.yorick = {
 	  isNormalUser = true;
 	  uid = 1000;
@@ -64,7 +59,6 @@ in
     hiddenServices.ssh.map = [{ port = 22; }];
     service-keys.ssh = "/root/keys/ssh.${machine}.key";
   };
-  deployment.keyys = [ (<yori-nix/keys> + "/ssh.${machine}.key") ];
 
   programs.ssh.extraConfig = ''
     Host *.onion
