@@ -1,0 +1,5 @@
+Nix
+    filter remove_matches ^\s*#
+    filter remove_inline #.*$
+    extension nix
+    3rd_gen_scale 3.9

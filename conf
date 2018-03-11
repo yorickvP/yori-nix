@@ -23,4 +23,7 @@ channel)
 	export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
 	eval ${@:3}
 	;;
+cloc)
+    cloc --read-lang-def=deploy/nix_cloc .
+    ;;
 esac
