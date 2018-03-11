@@ -5,25 +5,56 @@ then
 	sudo chgrp nixbld deploy_key
 	chmod 640 deploy_key
 fi
-export NIX_PATH="ssh-id-file=`pwd`/deploy_key":secrets=`pwd`/secrets.nix:yori-nix=`pwd`
+export NIX_PATH="ssh-id-file=$PWD/deploy_key":secrets=$PWD/secrets.nix:yori-nix=$PWD
+function get_channel {
+    case $1 in
+        git)
+	          echo "nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz"
+	          ;;
+        stable)
+            echo "nixpkgs=https://nixos.org/channels/nixos-17.03/nixexprs.tar.xz"
+	          ;;
+        checkout)
+            echo "nixpkgs=$PWD/../nixpkgs"
+            ;;
+        channel)
+	          echo "/nix/var/nix/profiles/per-user/root/channels/nixos"
+	          ;;
+    esac
+}
 case $1 in
-git)
-	export NIX_PATH="nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
-	eval ${@:3}
-	;;
-stable)
-	export NIX_PATH="nixpkgs=https://nixos.org/channels/nixos-17.03/nixexprs.tar.xz:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
-	eval ${@:3}
-	;;
-checkout)
-    export NIX_PATH="nixpkgs=`pwd`/../nixpkgs:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
-    eval ${@:3}
-    ;;
-channel)
-	export NIX_PATH="/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=`pwd`/logical/$2.nix:$NIX_PATH"
-	eval ${@:3}
-	;;
-cloc)
-    cloc --read-lang-def=deploy/nix_cloc .
-    ;;
+    cloc)
+        exec cloc --read-lang-def=deploy/nix_cloc .
+        ;;
+    copy-keys)
+        $0 exec "$2" nix build -f "\\<nixpkgs/nixos\\>" config.deployment.keys-copy --out-link copy-keys
+        TARGET_HOST=$(jq -r ".$2.host"<servers.json)
+        ./copy-keys/bin/copy-keys "$TARGET_HOST"
+        # rm ./copy-keys
+        ;;
+    exec)
+        CHANNEL=$(jq -r ".$2.pkgs"<servers.json)
+        export NIX_PATH="$(get_channel "$CHANNEL"):nixos-config=$PWD/logical/$2.nix:$NIX_PATH"
+        eval "${@:3}"
+        ;;
+    ssh)
+        TARGET_HOST=$(jq -r ".$2.host"<servers.json)
+        ssh root@"$TARGET_HOST"
+        ;;
+    repl)
+        exec "$0" exec "$2" nix repl "\\<nixpkgs\\>" "\\<nixpkgs/nixos\\>"
+        ;; 
+    build)
+        exec "$0" exec "$2" nixos-rebuild build
+        ;; 
+    boot)
+        TARGET_HOST=$(jq -r ".$2.host"<servers.json)
+        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host "$TARGET_HOST" boot
+        ;;
+    switch)
+        TARGET_HOST=$(jq -r ".$2.host"<servers.json)
+        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host "$TARGET_HOST" switch
+        ;;
+    
+    
 esac
