@@ -47,6 +47,10 @@ case $1 in
     build)
         exec "$0" exec "$2" nixos-rebuild build
         ;; 
+    copy)
+        TARGET_HOST=$(jq -r ".$2.host"<servers.json)
+        exec "$0" exec "$2" nixos-rebuild build --build-host localhost --target-host "$TARGET_HOST"
+        ;; 
     boot)
         TARGET_HOST=$(jq -r ".$2.host"<servers.json)
         exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host "$TARGET_HOST" boot
