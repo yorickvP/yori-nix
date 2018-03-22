@@ -2,7 +2,7 @@
 {
   imports = [
     <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-    <yori-nix/physical>
+    ./.
   ];
   hardware.yorick = { cpu = "intel"; gpu = "intel"; laptop = true; };
 
