@@ -1,10 +1,11 @@
 { config, lib, pkgs, ... }:
 {
   imports = [
-    <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ./.
   ];
   hardware.yorick = { cpu = "intel"; gpu = "intel"; laptop = true; };
+
+  hardware.enableRedistributableFirmware = true; # needed?
 
 
   boot = {
@@ -40,7 +41,7 @@
     ];
 
   nix.maxJobs = lib.mkDefault 4;
-  
+
   # bigger console font
   i18n.consoleFont = "latarcyrheb-sun32";
 }
