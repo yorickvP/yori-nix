@@ -18,11 +18,12 @@
     drivers = [ pkgs.gutenprint ];
   };
   environment.systemPackages = [pkgs.ghostscript pkgs.yubikey-manager];
-  services.xserver.displayManager.sessionCommands = ''
-    gpg-connect-agent /bye
-    unset SSH_AGENT_PID
-    export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
-  '';
+  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
+  #services.xserver.displayManager.sessionCommands = ''
+  #  gpg-connect-agent /bye
+  #  unset SSH_AGENT_PID
+  #  export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+  #'';
   virtualisation.virtualbox.host.enable = true;
   yorick.support32bit = true;
   nix.gc.automatic = pkgs.lib.mkOverride 30 false;
