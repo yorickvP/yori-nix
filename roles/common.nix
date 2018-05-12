@@ -35,7 +35,6 @@ in
 
   # Nix
   nixpkgs.config.allowUnfree = true;
-  nix.package = pkgs.nixUnstable;
 
   nix.buildCores = config.nix.maxJobs;
 

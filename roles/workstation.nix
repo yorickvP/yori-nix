@@ -4,15 +4,6 @@
     <yori-nix/roles/graphical.nix>
   ];
   users.extraUsers.yorick.extraGroups = ["input"];
-  services.redshift = {
-    enable = true;
-    latitude = "51.8";
-    longitude = "5.8";
-    temperature = {
-      day = 6500;
-      night = 5500;
-    };
-  };
   services.printing = {
     enable = true;
     drivers = [ pkgs.gutenprint ];
@@ -26,12 +17,10 @@
   #'';
   virtualisation.virtualbox.host.enable = true;
   yorick.support32bit = true;
-  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
   # yubikey
   hardware.u2f.enable = true;
   services.pcscd.enable = true;
   #environment.systemPackages = [pkgs.yubikey-manager];
-}
   nix = {
     gc.automatic = pkgs.lib.mkOverride 30 false;
     binaryCaches = [
@@ -49,3 +38,4 @@
     #  netrc-file = ${nixnetrc}
     #'';
   };
+}
