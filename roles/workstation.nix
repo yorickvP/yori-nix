@@ -31,3 +31,20 @@
   services.pcscd.enable = true;
   #environment.systemPackages = [pkgs.yubikey-manager];
 }
+  nix = {
+    gc.automatic = pkgs.lib.mkOverride 30 false;
+    binaryCaches = [
+      "https://cache.nixos.org"
+    ];
+    trustedBinaryCaches = config.nix.binaryCaches ++ [
+      "https://builder.serokell.io"
+      "https://cache.lumi.guide"
+    ];
+    binaryCachePublicKeys = [
+      "serokell:ic/49yTkeFIk4EBX1CZ/Wlt5fQfV7yCifaJyoM+S3Ss="
+      "cache.lumi.guide-1:z813xH+DDlh+wvloqEiihGvZqLXFmN7zmyF8wR47BHE="
+    ];
+    #extraOptions = ''
+    #  netrc-file = ${nixnetrc}
+    #'';
+  };
