@@ -3,7 +3,7 @@
   options.services.yorick.quassel = {
     enable = lib.mkEnableOption "quassel container";
   };
-  config = {
+  config = lib.mkIf config.services.yorick.quassel.enable {
     containers.quassel = {
       config = { config, pkgs, ... }: {
         services.postgresql = {
