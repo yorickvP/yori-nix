@@ -49,15 +49,15 @@ case $1 in
         ;; 
     copy)
         TARGET_HOST=$(jq -r ".$2.host"<servers.json)
-        exec "$0" exec "$2" nixos-rebuild build --build-host localhost --target-host "$TARGET_HOST"
+        exec "$0" exec "$2" nixos-rebuild build --build-host localhost --target-host root@"$TARGET_HOST"
         ;; 
     boot)
         TARGET_HOST=$(jq -r ".$2.host"<servers.json)
-        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host "$TARGET_HOST" boot
+        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host root@"$TARGET_HOST" boot
         ;;
     switch)
         TARGET_HOST=$(jq -r ".$2.host"<servers.json)
-        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host "$TARGET_HOST" switch
+        exec "$0" exec "$2" nixos-rebuild --build-host localhost --target-host root@"$TARGET_HOST" switch
         ;;
     
     
