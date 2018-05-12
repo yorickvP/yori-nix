@@ -9,7 +9,6 @@
     drivers = [ pkgs.gutenprint ];
   };
   environment.systemPackages = [pkgs.ghostscript pkgs.yubikey-manager];
-  nix.gc.automatic = pkgs.lib.mkOverride 30 false;
   #services.xserver.displayManager.sessionCommands = ''
   #  gpg-connect-agent /bye
   #  unset SSH_AGENT_PID

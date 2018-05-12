@@ -41,6 +41,7 @@ in
   # Nix
   nixpkgs.config.allowUnfree = true;
   nix.package = pkgs.nixUnstable;
+  nixpkgs.overlays = import ../packages;
 
   nix.buildCores = config.nix.maxJobs;
 

@@ -43,4 +43,6 @@
   
   # bigger console font
   i18n.consoleFont = "latarcyrheb-sun32";
+
+  hardware.firmware = lib.mkBefore [ pkgs.firmware_qca6174 ];
 }
