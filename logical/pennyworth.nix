@@ -27,7 +27,7 @@
       };
     };
     xmpp = {
-      enable = true;
+      enable = false;
       vhost = "yori.cc";
       admins = [ "yorick@yori.cc" ];
     };
@@ -49,6 +49,42 @@
     hidden-service = {
       hostname = "muflax65ngodyewp.onion";
       private_key = "/root/keys/http.muflax.key";
+    };
+  };
+  users.extraUsers.git = {
+    createHome = true;
+    home = config.services.gitea.stateDir; extraGroups = [ "git" ]; useDefaultShell = true;};
+  services.gitea = {
+    enable = true;
+    user = "git";
+    database.user = "root";
+    database.name = "gogs";
+    #dump.enable = true; TODO: backups
+    domain = "git.yori.cc";
+    rootUrl = "https://git.yori.cc/";
+    httpAddress = "localhost";
+    cookieSecure = true;
+    extraConfig = ''
+      [service]
+      REGISTER_EMAIL_CONFIRM = false
+      ENABLE_NOTIFY_MAIL = false
+      DISABLE_REGISTRATION = true
+      REQUIRE_SIGNIN_VIEW = false
+      [picture]
+      DISABLE_GRAVATAR = false
+      [mailer]
+      ENABLED = false
+      AVATAR_UPLOAD_PATH = ${config.services.gitea.stateDir}/data/avatars
+    '';
+  };
+  services.nginx.virtualHosts."git.yori.cc" = {
+    forceSSL = true;
+    enableACME = true;
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${toString config.services.gitea.httpPort}";
+      extraConfig = ''
+        proxy_buffering off;
+      '';
     };
   };
   deployment.keyys = [ <yori-nix/keys/http.muflax.key> ];

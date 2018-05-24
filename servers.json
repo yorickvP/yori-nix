@@ -1,6 +1,6 @@
 {
     "pennyworth": {
-        "pkgs": "channel",
+        "pkgs": "stable",
         "host": "pennyworth.yori.cc"
     },
     "jarvis": {
